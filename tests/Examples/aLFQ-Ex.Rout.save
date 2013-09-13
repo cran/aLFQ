@@ -1,0 +1,702 @@
+
+R Under development (unstable) (2013-09-12 r63919) -- "Unsuffered Consequences"
+Copyright (C) 2013 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin10.8.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "aLFQ"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> library('aLFQ')
+Loading required package: data.table
+Loading required package: plyr
+Loading required package: caret
+Loading required package: cluster
+Loading required package: foreach
+Loading required package: lattice
+Loading required package: reshape2
+Loading required package: seqinr
+
+Attaching package: ‘seqinr’
+
+The following object is masked from ‘package:caret’:
+
+    dotPlot
+
+The following object is masked from ‘package:plyr’:
+
+    count
+
+> 
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("ALF")
+> ### * ALF
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: ALF
+> ### Title: Generate ALF report
+> ### Aliases: ALF ALF.default
+> ### Keywords: ALF SRM SWATH SIS AQUA
+> 
+> ### ** Examples
+> 
+> ## Not run: data(UPS2MS)
+> 
+> ## Not run: ALF(UPS2_SRM)
+> 
+> 
+> 
+> cleanEx()
+> nameEx("APEX")
+> ### * APEX
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: APEX
+> ### Title: Training, testing and validation of APEX peptide observability
+> ###   models
+> ### Aliases: APEX APEX.default predict.APEX cval.APEX print.APEX plot.APEX
+> ### Keywords: APEX
+> 
+> ### ** Examples
+> 
+> set.seed(131)
+> 
+> data(APEXMS)
+> 
+> APEX_ORBI<-head(APEX_ORBI,50) # Remove this line for real applications
+> APEX_ORBI.af <- apexFeatures(APEX_ORBI)
+> APEX_ORBI.apex <- APEX(data=APEX_ORBI.af)
+Loading required package: randomForest
+randomForest 4.6-7
+Type rfNews() to see new features/changes/bug fixes.
+> APEX_ORBI.apex <- cval(APEX_ORBI.apex, folds=2)
+Loading required package: ROCR
+Loading required package: gplots
+Loading required package: gtools
+Loading required package: gdata
+gdata: read.xls support for 'XLS' (Excel 97-2004) files ENABLED.
+
+gdata: read.xls support for 'XLSX' (Excel 2007+) files ENABLED.
+
+Attaching package: ‘gdata’
+
+The following object is masked from ‘package:randomForest’:
+
+    combine
+
+The following object is masked from ‘package:stats’:
+
+    nobs
+
+The following object is masked from ‘package:utils’:
+
+    object.size
+
+Loading required package: caTools
+Loading required package: grid
+Loading required package: KernSmooth
+KernSmooth 2.23 loaded
+Copyright M. P. Wand 1997-2009
+Loading required package: MASS
+
+Attaching package: ‘gplots’
+
+The following object is masked from ‘package:stats’:
+
+    lowess
+
+> print(APEX_ORBI.apex)
+APEX
+Features: 69
+Trainingset size: 50
+Testset size: 
+AUC: An object of class "performance"
+Slot "x.name":
+[1] "None"
+
+Slot "y.name":
+[1] "Area under the ROC curve"
+
+Slot "alpha.name":
+[1] "none"
+
+Slot "x.values":
+list()
+
+Slot "y.values":
+[[1]]
+[1] 0.7443182
+
+
+Slot "alpha.values":
+list()
+
+
+> plot(APEX_ORBI.apex)
+> 
+> 
+> 
+> cleanEx()
+
+detaching ‘package:ROCR’, ‘package:gplots’, ‘package:MASS’,
+  ‘package:KernSmooth’, ‘package:grid’, ‘package:caTools’,
+  ‘package:gdata’, ‘package:gtools’, ‘package:randomForest’
+
+> nameEx("APEXMS")
+> ### * APEXMS
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: APEXMS
+> ### Title: Calculating absolute and relative protein abundance from mass
+> ###   spectrometry-based protein expression data.
+> ### Aliases: APEX_ORBI APEX_LCQ
+> ### Keywords: datasets APEX
+> 
+> ### ** Examples
+> 
+> data(APEXMS)
+> 
+> 
+> 
+> cleanEx()
+> nameEx("AbsoluteQuantification")
+> ### * AbsoluteQuantification
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: AbsoluteQuantification
+> ### Title: Absolute label-free quantification of mass spectrometry
+> ###   proteomics experiments
+> ### Aliases: AbsoluteQuantification AbsoluteQuantification.default
+> ###   predict.AbsoluteQuantification cval cval.default
+> ###   cval.AbsoluteQuantification print.AbsoluteQuantification
+> ###   plot.AbsoluteQuantification hist.AbsoluteQuantification export
+> ###   export.default export.AbsoluteQuantification
+> ### Keywords: AbsoluteQuantification absolute label-free quantification
+> 
+> ### ** Examples
+> 
+> data(UPS2MS)
+> 
+> UPS2_SRM<-head(UPS2_SRM,100) # Remove this line for real applications
+> 
+> data_AbsoluteQuantification <- cval(AbsoluteQuantification(UPS2_SRM),mcx=2)
+> print(data_AbsoluteQuantification)
+AbsoluteQuantification
+
+Number of proteins: 4
+Calibration Trainingset size: 4
+Calibration Testset size: 0
+Calibration Regression mean-fold error: 1.775431
+Calibration Regression R-squared: 0.9479114
+Calibration cross-validation mean-fold error: 3.424367
+Calibration cross-validation R-squared: -Inf
+Calibration CV: 16.82698
+Normalized Concentration CV: -86.43073
+> plot(data_AbsoluteQuantification)
+> hist(data_AbsoluteQuantification)
+> 
+> 
+> 
+> cleanEx()
+> nameEx("ProteinInference")
+> ### * ProteinInference
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: ProteinInference
+> ### Title: Protein inference for aLFQ import data frame
+> ### Aliases: ProteinInference ProteinInference.default
+> ### Keywords: ProteinInference label-free quantification peptide inference
+> ###   protein inference
+> 
+> ### ** Examples
+> 
+> data(UPS2MS)
+> 
+> data_ProteinInference <- ProteinInference(UPS2_SRM)
+> print(data_ProteinInference)
+     run_id                protein_id concentration    response
+1  UPS2_SRM  O76070ups|SYUG_HUMAN_UPS         0.449   161978.67
+2  UPS2_SRM  P00167ups|CYB5_HUMAN_UPS          44.9 13113548.67
+3  UPS2_SRM P00709ups|LALBA_HUMAN_UPS          4.49   568833.67
+4  UPS2_SRM  P00915ups|CAH1_HUMAN_UPS           449 37676253.33
+5  UPS2_SRM  P00918ups|CAH2_HUMAN_UPS           449 25882206.33
+6  UPS2_SRM  P01008ups|ANT3_HUMAN_UPS         0.449    74258.33
+7  UPS2_SRM   P01031ups|CO5_HUMAN_UPS           449 60670316.67
+8  UPS2_SRM P01127ups|PDGFB_HUMAN_UPS         0.449    46324.00
+9  UPS2_SRM   P01133ups|EGF_HUMAN_UPS          44.9  3684505.00
+10 UPS2_SRM  P01344ups|IGF2_HUMAN_UPS         0.449   110885.00
+11 UPS2_SRM   P02144ups|MYG_HUMAN_UPS          44.9  9793640.33
+12 UPS2_SRM P02753ups|RETBP_HUMAN_UPS          4.49   670395.00
+13 UPS2_SRM  P02768ups|ALBU_HUMAN_UPS           449 73089941.67
+14 UPS2_SRM  P04040ups|CATA_HUMAN_UPS          44.9  5000338.67
+15 UPS2_SRM  P06732ups|KCRM_HUMAN_UPS          4.49   549538.00
+16 UPS2_SRM  P12081ups|SYHC_HUMAN_UPS          4.49   695690.33
+17 UPS2_SRM  P15559ups|NQO1_HUMAN_UPS          44.9  2309451.50
+18 UPS2_SRM  P16083ups|NQO2_HUMAN_UPS          4.49   589519.67
+19 UPS2_SRM   P41159ups|LEP_HUMAN_UPS           449 43289065.17
+20 UPS2_SRM   P55957ups|BID_HUMAN_UPS         0.449    19155.33
+21 UPS2_SRM  P61626ups|LYSC_HUMAN_UPS          4.49   256876.00
+22 UPS2_SRM  P61769ups|B2MG_HUMAN_UPS         0.449    49716.67
+23 UPS2_SRM  P62937ups|PPIA_HUMAN_UPS          44.9 11580894.33
+24 UPS2_SRM  P62988ups|UBIQ_HUMAN_UPS           449 26079521.33
+25 UPS2_SRM P63165ups|SUMO1_HUMAN_UPS          44.9  7367058.00
+26 UPS2_SRM   P68871ups|HBB_HUMAN_UPS           449 24618285.00
+27 UPS2_SRM   P69905ups|HBA_HUMAN_UPS           449 22574059.67
+28 UPS2_SRM Q06830ups|PRDX1_HUMAN_UPS          44.9  5444638.67
+> 
+> 
+> 
+> cleanEx()
+> nameEx("UPS2MS")
+> ### * UPS2MS
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: UPS2MS
+> ### Title: Calculating absolute and relative protein abundance from mass
+> ###   spectrometry-based protein expression data.
+> ### Aliases: UPS2 UPS2_SC UPS2_LFQ UPS2_SRM
+> ### Keywords: datasets UPS2
+> 
+> ### ** Examples
+> 
+> data(UPS2MS)
+> 
+> 
+> 
+> cleanEx()
+> nameEx("aLFQ.package")
+> ### * aLFQ.package
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: aLFQ-package
+> ### Title: aLFQ
+> ### Aliases: aLFQ-package aLFQ
+> ### Keywords: aLFQ
+> 
+> ### ** Examples
+> 
+> ## Not run: help(package="aLFQ")
+> 
+> 
+> 
+> cleanEx()
+> nameEx("aa.index")
+> ### * aa.index
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: aa.index
+> ### Title: AAindex: Amino Acid Index Database
+> ### Aliases: aa.index
+> ### Keywords: datasets
+> 
+> ### ** Examples
+> 
+> ## Load AAindex data
+> data(aa.index)
+> 
+> ## Find all indeces described as "volume"
+> ind <- which(sapply(aa.index, function(x)
++                     length(grep("volume", x$D, ignore.case=TRUE)) != 0))
+> 
+> ## find all indeces with author "Kyte"
+> ind <- which(sapply(aa.index, function(x) length(grep("Kyte", x$A)) != 0))
+> 
+> ## examine the index
+> aa.index[[ind]]$I
+   A    R    N    D    C    Q    E    G    H    I    L    K    M    F    P    S 
+ 1.8 -4.5 -3.5 -3.5  2.5 -3.5 -3.5 -0.4 -3.2  4.5  3.8 -3.9  1.9  2.8 -1.6 -0.8 
+   T    W    Y    V 
+-0.7 -0.9 -1.3  4.2 
+> 
+> ## find indeces which correlate with it
+> all.ind <- names(which(Mod(aa.index[[ind]]$C) >= 0.88))
+> 
+> ## examine them all
+> sapply(all.ind, function (x) aa.index[[x]]$I)
+  JURD980101 CHOC760103 OLSK800101 JANJ780102 NADH010102 NADH010101 DESM900102
+A       1.10       0.38       1.38         51         51         58       1.26
+R      -5.10       0.01       0.00          5       -144       -184       0.38
+N      -3.50       0.12       0.37         22        -84        -93       0.59
+D      -3.60       0.15       0.52         19        -78        -97       0.27
+C       2.50       0.45       1.43         74        137        116       1.60
+Q      -3.68       0.07       0.22         16       -128       -139       0.39
+E      -3.20       0.18       0.71         16       -115       -131       0.23
+G      -0.64       0.36       1.34         52        -13        -11       1.08
+H      -3.20       0.17       0.66         34        -55        -73       1.00
+I       4.50       0.60       2.32         66        106        107       1.44
+L       3.80       0.45       1.47         60        103         95       1.36
+K      -4.11       0.03       0.15          3       -205        -24       0.33
+M       1.90       0.40       1.78         52         73         78       1.52
+F       2.80       0.50       1.72         58        108         92       1.46
+P      -1.90       0.18       0.85         25        -79        -79       0.54
+S      -0.50       0.22       0.86         35        -26        -34       0.98
+T      -0.70       0.23       0.89         30         -3         -7       1.01
+W      -0.46       0.27       0.82         49         69         59       1.06
+Y      -1.30       0.15       0.47         24         11        -11       0.89
+V       4.20       0.54       1.99         64        108        100       1.33
+  EISD860103 CHOC760104 NADH010103 WOLR810101 RADA880101 MANP780101 KUHL950101
+A       0.00       0.20         41       1.94       1.81      12.97       0.78
+R      -0.96       0.00       -109     -19.92     -14.92      11.72       1.58
+N      -0.86       0.03        -74      -9.68      -6.64      11.42       1.20
+D      -0.98       0.04        -47     -10.95      -8.72      10.85       1.35
+C       0.76       0.22        169      -1.24       1.28      14.63       0.55
+Q      -1.00       0.01       -104      -9.38      -5.54      11.76       1.19
+E      -0.89       0.03        -90     -10.20      -6.81      11.89       1.45
+G       0.00       0.18        -18       2.39       0.94      12.43       0.68
+H      -0.75       0.02        -35     -10.27      -4.66      12.16       0.99
+I       0.99       0.19        104       2.15       4.92      15.67       0.47
+L       0.89       0.16        103       2.28       4.92      14.90       0.56
+K      -0.99       0.00       -148      -9.52      -5.55      11.36       1.10
+M       0.94       0.11         77      -1.48       2.35      14.39       0.66
+F       0.92       0.14        128      -0.76       2.98      14.00       0.47
+P       0.22       0.04        -81      -3.68       0.00      11.37       0.69
+S      -0.67       0.08        -31      -5.06      -3.40      11.23       1.00
+T       0.09       0.08         10      -4.88      -2.57      11.69       1.05
+W       0.67       0.04        102      -5.88       2.33      13.93       0.70
+Y      -0.93       0.03         36      -6.11      -0.14      13.42       1.00
+V       0.84       0.18        116       1.99       4.04      15.71       0.51
+  GUYH850105 OOBM770101
+A      -0.27     -1.895
+R       2.00     -1.475
+N       0.61     -1.560
+D       0.50     -1.518
+C      -0.23     -2.035
+Q       1.00     -1.521
+E       0.33     -1.535
+G      -0.22     -1.898
+H       0.37     -1.755
+I      -0.80     -1.951
+L      -0.44     -1.966
+K       1.17     -1.374
+M      -0.31     -1.963
+F      -0.55     -1.864
+P       0.36     -1.699
+S       0.17     -1.753
+T       0.18     -1.767
+W       0.05     -1.869
+Y       0.48     -1.686
+V      -0.65     -1.981
+> 
+> 
+> 
+> cleanEx()
+> nameEx("apexFeatures")
+> ### * apexFeatures
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: apexFeatures
+> ### Title: Calculation of physicochemical amino acid properties for APEX
+> ### Aliases: apexFeatures apexFeatures.default print.apexFeatures
+> ### Keywords: AAIndex PeptideSieve APEX
+> 
+> ### ** Examples
+> 
+> data(APEXMS)
+> 
+> # APEX_ORBI
+> APEX_ORBI<-head(APEX_ORBI,20) # Remove this line for real applications
+> APEX_ORBI.af <- apexFeatures(APEX_ORBI)
+> print(APEX_ORBI.af)
+apexFeatures
+Features: 69
+Dataset size: 20
+> 
+> # APEX_LCQ
+> APEX_LCQ<-head(APEX_LCQ,20) # Remove this line for real applications
+> APEX_LCQ.af <- apexFeatures(APEX_LCQ)
+> print(APEX_LCQ.af)
+apexFeatures
+Features: 69
+Dataset size: 20
+> 
+> 
+> 
+> cleanEx()
+> nameEx("import")
+> ### * import
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: import
+> ### Title: import of mass spectrometry proteomics data analysis software
+> ###   reports.
+> ### Aliases: import import.default
+> ### Keywords: Skyline OpenSWATH mProphet OpenMS LFQ Abacus
+> 
+> ### ** Examples
+> 
+> import(ms_filenames = system.file("extdata","example_abacus_peptide.txt",package="aLFQ"),
++ ms_filetype = "abacus_peptide", concentration_filename =
++ system.file("extdata","example_concentration_peptide.csv",
++ package="aLFQ"), fasta = system.file("extdata","example.fasta",package="aLFQ"), spectral_prob=0.95)
+      run_id  peptide_id protein_id peptide_sequence precursor_charge
+1 REPLICATE1 ANDPEPTIDEA   PROTEINA      ANDPEPTIDEA                2
+2 REPLICATE1    PEPTIDEC   PROTEINB         PEPTIDEC                2
+3 REPLICATE1    PEPTIDEK   PROTEINA         PEPTIDEK                2
+4 REPLICATE2 ANDPEPTIDEA   PROTEINA      ANDPEPTIDEA                2
+5 REPLICATE2    PEPTIDEC   PROTEINB         PEPTIDEC                2
+6 REPLICATE2    PEPTIDEK   PROTEINA         PEPTIDEK                2
+  peptide_intensity concentration
+1                43            12
+2                 1             ?
+3                12             ?
+4                 5             ?
+5                12             ?
+6                 2             ?
+> 
+> import(ms_filenames = system.file("extdata","example_abacus_protein.txt",package="aLFQ"),
++ ms_filetype = "abacus_protein", concentration_filename =
++ system.file("extdata","example_concentration_protein.csv",
++ package="aLFQ"), spectral_prob=0.95, target_column="ADJNSAF")
+  protein_id     run_id protein_intensity concentration
+1   PROTEINA REPLICATE1                 0            12
+2   PROTEINB REPLICATE1                 0             ?
+> 
+> import(ms_filenames = system.file("extdata","example_mprophet.txt",package="aLFQ"),
++ ms_filetype = "mprophet",
++ concentration_filename = system.file("extdata","example_concentration_peptide.csv",package="aLFQ"),
++ targeted_fdr=0.01)
+             run_id  peptide_id protein_id    transition_id peptide_sequence
+1  REPLICATE1.mzXML ANDPEPTIDEA   PROTEINA ANDPEPTIDEA y7_1      ANDPEPTIDEA
+2  REPLICATE1.mzXML ANDPEPTIDEA   PROTEINA ANDPEPTIDEA y8_1      ANDPEPTIDEA
+3  REPLICATE1.mzXML ANDPEPTIDEA   PROTEINA ANDPEPTIDEA y9_1      ANDPEPTIDEA
+4  REPLICATE1.mzXML ANDPEPTIDEA   PROTEINA ANDPEPTIDEA y9_2      ANDPEPTIDEA
+5  REPLICATE1.mzXML    PEPTIDEC   PROTEINB    PEPTIDEC y8_1         PEPTIDEC
+6  REPLICATE1.mzXML    PEPTIDEC   PROTEINB    PEPTIDEC y6_1         PEPTIDEC
+7  REPLICATE1.mzXML    PEPTIDEK   PROTEINA    PEPTIDEK y8_1         PEPTIDEK
+8  REPLICATE1.mzXML    PEPTIDEK   PROTEINA    PEPTIDEK y4_1         PEPTIDEK
+9  REPLICATE1.mzXML    PEPTIDEK   PROTEINA    PEPTIDEK b8_1         PEPTIDEK
+10 REPLICATE1.mzXML    PEPTIDEK   PROTEINA    PEPTIDEK y9_1         PEPTIDEK
+   precursor_charge transition_intensity concentration
+1                 2            1828435.7             ?
+2                 2            1537762.3             ?
+3                 2            1469749.2             ?
+4                 2             892880.2             ?
+5                 2            3832324.2             ?
+6                 2            2285569.5             ?
+7                 2            6720641.3             ?
+8                 2            2819920.0             ?
+9                 2            1497260.0             ?
+10                2            1006629.0             ?
+> 
+> import(ms_filenames = system.file("extdata","example_openmslfq.csv",package="aLFQ"),
++ ms_filetype = "openmslfq", targeted_fdr=0.01)
+       run_id protein_id  peptide_id peptide_sequence precursor_charge
+1 abundance_0   PROTEINA ANDPEPTIDEA      ANDPEPTIDEA                2
+2 abundance_0   PROTEINA    PEPTIDEK         PEPTIDEK                2
+3 abundance_0   PROTEINB    PEPTIDEC         PEPTIDEC                2
+  peptide_intensity concentration
+1                 0             ?
+2                 0             ?
+3          33894200             ?
+> 
+> import(ms_filenames = system.file("extdata","example_openswath.txt",package="aLFQ"),
++ ms_filetype = "openswath", targeted_fdr=1)
+   run_id protein_id  peptide_id                      transition_id
+1       0   PROTEINA ANDPEPTIDEA ANDPEPTIDEA 212211_DIQHWESLKPEER_4
+2       0   PROTEINA ANDPEPTIDEA ANDPEPTIDEA 212218_DIQHWESLKPEER_4
+3       0   PROTEINA ANDPEPTIDEA ANDPEPTIDEA 212212_DIQHWESLKPEER_4
+4       0   PROTEINA ANDPEPTIDEA ANDPEPTIDEA 212208_DIQHWESLKPEER_4
+5       0   PROTEINA ANDPEPTIDEA ANDPEPTIDEA 212221_DIQHWESLKPEER_4
+6       0   PROTEINA ANDPEPTIDEA ANDPEPTIDEA 212211_DIQHWESLKPEER_4
+7       0   PROTEINA ANDPEPTIDEA ANDPEPTIDEA 212218_DIQHWESLKPEER_4
+8       0   PROTEINA ANDPEPTIDEA ANDPEPTIDEA 212212_DIQHWESLKPEER_4
+9       0   PROTEINA ANDPEPTIDEA ANDPEPTIDEA 212208_DIQHWESLKPEER_4
+10      0   PROTEINA ANDPEPTIDEA ANDPEPTIDEA 212221_DIQHWESLKPEER_4
+11      0   PROTEINA ANDPEPTIDEA ANDPEPTIDEA 212211_DIQHWESLKPEER_4
+12      0   PROTEINA ANDPEPTIDEA ANDPEPTIDEA 212218_DIQHWESLKPEER_4
+13      0   PROTEINA ANDPEPTIDEA ANDPEPTIDEA 212212_DIQHWESLKPEER_4
+14      0   PROTEINA ANDPEPTIDEA ANDPEPTIDEA 212208_DIQHWESLKPEER_4
+15      0   PROTEINA ANDPEPTIDEA ANDPEPTIDEA 212221_DIQHWESLKPEER_4
+   peptide_sequence precursor_charge transition_intensity concentration
+1       ANDPEPTIDEA                2                 6496             ?
+2       ANDPEPTIDEA                2                 2966             ?
+3       ANDPEPTIDEA                2                 2509             ?
+4       ANDPEPTIDEA                2                 1137             ?
+5       ANDPEPTIDEA                2                 1582             ?
+6       ANDPEPTIDEA                2                 2028             ?
+7       ANDPEPTIDEA                2                 3550             ?
+8       ANDPEPTIDEA                2                 7007             ?
+9       ANDPEPTIDEA                2                  591             ?
+10      ANDPEPTIDEA                2                 2464             ?
+11      ANDPEPTIDEA                2                11149             ?
+12      ANDPEPTIDEA                2                 3613             ?
+13      ANDPEPTIDEA                2                 7664             ?
+14      ANDPEPTIDEA                2                  934             ?
+15      ANDPEPTIDEA                2                10329             ?
+> 
+> import(ms_filenames = system.file("extdata","example_skyline.csv",package="aLFQ"),
++ ms_filetype = "skyline",
++ concentration_filename = system.file("extdata","example_concentration_protein.csv",package="aLFQ"))
+   protein_id     run_id  peptide_id transition_id peptide_sequence
+1    PROTEINA REPLICATE1 ANDPEPTIDEA            y6      ANDPEPTIDEA
+2    PROTEINA REPLICATE1 ANDPEPTIDEA            y6      ANDPEPTIDEA
+3    PROTEINA REPLICATE1 ANDPEPTIDEA            y5      ANDPEPTIDEA
+4    PROTEINA REPLICATE1 ANDPEPTIDEA            y6      ANDPEPTIDEA
+5    PROTEINA REPLICATE1 ANDPEPTIDEA            y6      ANDPEPTIDEA
+6    PROTEINA REPLICATE1 ANDPEPTIDEA            y6      ANDPEPTIDEA
+7    PROTEINA REPLICATE1 ANDPEPTIDEA            y6      ANDPEPTIDEA
+8    PROTEINA REPLICATE1    PEPTIDEK            y7         PEPTIDEK
+9    PROTEINA REPLICATE1    PEPTIDEB            y7         PEPTIDEB
+10   PROTEINA REPLICATE1    PEPTIDEB            y7         PEPTIDEB
+11   PROTEINA REPLICATE1    PEPTIDEB            y6         PEPTIDEB
+12   PROTEINA REPLICATE1    PEPTIDEB            y6         PEPTIDEB
+13   PROTEINA REPLICATE1 ANDPEPTIDEA            y5      ANDPEPTIDEA
+14   PROTEINA REPLICATE1 ANDPEPTIDEA            y5      ANDPEPTIDEA
+15   PROTEINA REPLICATE1 ANDPEPTIDEA            y3      ANDPEPTIDEA
+16   PROTEINA REPLICATE1 ANDPEPTIDEA            y3      ANDPEPTIDEA
+17   PROTEINA REPLICATE1 ANDPEPTIDEA            y3      ANDPEPTIDEA
+18   PROTEINA REPLICATE1    PEPTIDEB            y4         PEPTIDEB
+19   PROTEINA REPLICATE1    PEPTIDEB            y4         PEPTIDEB
+20   PROTEINA REPLICATE1    PEPTIDEB            y3         PEPTIDEB
+21   PROTEINA REPLICATE1    PEPTIDEB            y3         PEPTIDEB
+22   PROTEINA REPLICATE1    PEPTIDEB            y3         PEPTIDEB
+23   PROTEINA REPLICATE1    PEPTIDEB            y6         PEPTIDEB
+24   PROTEINA REPLICATE1    PEPTIDEB            y6         PEPTIDEB
+25   PROTEINA REPLICATE1    PEPTIDEB            y6         PEPTIDEB
+26   PROTEINA REPLICATE1    PEPTIDEB            y6         PEPTIDEB
+27   PROTEINA REPLICATE1    PEPTIDEB            y5         PEPTIDEB
+28   PROTEINA REPLICATE1    PEPTIDEB            y5         PEPTIDEB
+29   PROTEINA REPLICATE1    PEPTIDEB            y5         PEPTIDEB
+30   PROTEINA REPLICATE1    PEPTIDEB            y4         PEPTIDEB
+31   PROTEINB REPLICATE2    PEPTIDEC            y6         PEPTIDEC
+32   PROTEINB REPLICATE2    PEPTIDEC            y6         PEPTIDEC
+33   PROTEINB REPLICATE2    PEPTIDEC            y6         PEPTIDEC
+34   PROTEINB REPLICATE2    PEPTIDEC            y5         PEPTIDEC
+35   PROTEINB REPLICATE2    PEPTIDEC            b3         PEPTIDEC
+36   PROTEINB REPLICATE2    PEPTIDEC            b3         PEPTIDEC
+37   PROTEINB REPLICATE2    PEPTIDEC            b3         PEPTIDEC
+38   PROTEINB REPLICATE2    PEPTIDEC            y8         PEPTIDEC
+39   PROTEINB REPLICATE2    PEPTIDEC            y8         PEPTIDEC
+40   PROTEINB REPLICATE2    PEPTIDEC            y8         PEPTIDEC
+41   PROTEINB REPLICATE2    PEPTIDEC            y7         PEPTIDEC
+42   PROTEINB REPLICATE2    PEPTIDEC            y7         PEPTIDEC
+43   PROTEINB REPLICATE2    PEPTIDEC            y7         PEPTIDEC
+44   PROTEINB REPLICATE2    PEPTIDEC            y5         PEPTIDEC
+45   PROTEINB REPLICATE2    PEPTIDEC            y5         PEPTIDEC
+46   PROTEINB REPLICATE2    PEPTIDEC            y4         PEPTIDEC
+47   PROTEINB REPLICATE2    PEPTIDEC            y4         PEPTIDEC
+48   PROTEINB REPLICATE2    PEPTIDEC            y4         PEPTIDEC
+   precursor_charge transition_intensity concentration
+1                 2                28743            12
+2                 2                25763            12
+3                 2                91203            12
+4                 2                21827            12
+5                 2                 6725            12
+6                 2                 7264            12
+7                 2                 4394            12
+8                 2                 2396            12
+9                 2                 2596            12
+10                2                 3644            12
+11                2                14649            12
+12                2                17255            12
+13                2                92042            12
+14                2                83372            12
+15                2                 7816            12
+16                2                12404            12
+17                2                 9193            12
+18                2                26914            12
+19                2                21079            12
+20                2                 5309            12
+21                2                 5177            12
+22                2                 5776            12
+23                2                 8324            12
+24                2                 6029            12
+25                2                 5636            12
+26                2                15238            12
+27                2                10293            12
+28                2                 9833            12
+29                2                11155            12
+30                2                18502            12
+31                2                49564             ?
+32                2                56384             ?
+33                2                41803             ?
+34                2                13666             ?
+35                2                15751             ?
+36                2                17578             ?
+37                2                13887             ?
+38                2                79795             ?
+39                2                77217             ?
+40                2                91495             ?
+41                2                34776             ?
+42                2                28140             ?
+43                2                26762             ?
+44                2                23772             ?
+45                2                23587             ?
+46                2                14318             ?
+47                2                18425             ?
+48                2                19070             ?
+> 
+> 
+> 
+> cleanEx()
+> nameEx("proteotypic")
+> ### * proteotypic
+> 
+> flush(stderr()); flush(stdout())
+> 
+> ### Name: proteotypic
+> ### Title: Prediction of the flyability of proteotypic peptides
+> ### Aliases: proteotypic proteotypic.default
+> ### Keywords: APEX proteotypic peptides flyability high-flyers
+> 
+> ### ** Examples
+> 
+> set.seed(131)
+> 
+> data(APEXMS)
+> 
+> APEX_ORBI<-head(APEX_ORBI,20) # Remove this line for real applications
+> APEX_ORBI.af <- apexFeatures(APEX_ORBI)
+> APEX_ORBI.apex <- APEX(data=APEX_ORBI.af)
+Loading required package: randomForest
+randomForest 4.6-7
+Type rfNews() to see new features/changes/bug fixes.
+> 
+> peptides <- proteotypic(fasta=system.file("extdata","example.fasta",package="aLFQ"),
++ model=APEX_ORBI.apex, min_aa=4 , max_aa=20)
+> print(peptides)
+  protein_id peptide_sequence  apex
+1   PROTEINA      ANDPEPTIDEA 0.342
+2   PROTEINB         PEPTIDEC 0.228
+3   PROTEINA         PEPTIDEK 0.058
+> 
+> 
+> 
+> ### * <FOOTER>
+> ###
+> options(digits = 7L)
+> base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
+Time elapsed:  5.863 0.181 6.151 0.088 0.011 
+> grDevices::dev.off()
+null device 
+          1 
+> ###
+> ### Local variables: ***
+> ### mode: outline-minor ***
+> ### outline-regexp: "\\(> \\)?### [*]+" ***
+> ### End: ***
+> quit('no')
