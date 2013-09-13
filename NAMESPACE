@@ -1,0 +1,28 @@
+export(AbsoluteQuantification,ProteinInference,APEX,proteotypic,apexFeatures,ALF,cval,import,export)
+
+S3method(AbsoluteQuantification, default)
+S3method(predict, AbsoluteQuantification)
+S3method(cval, AbsoluteQuantification)
+S3method(print, AbsoluteQuantification)
+S3method(plot, AbsoluteQuantification)
+S3method(hist, AbsoluteQuantification)
+S3method(export, AbsoluteQuantification)
+
+S3method(ProteinInference, default)
+
+S3method(top, default)
+
+S3method(APEX, default)
+S3method(predict, APEX)
+S3method(cval, APEX)
+S3method(print, APEX)
+S3method(plot, APEX)
+
+S3method(proteotypic, default)
+
+S3method(apexFeatures, default)
+S3method(print, apexFeatures)
+
+S3method(ALF, default)
+
+S3method(import, default)
