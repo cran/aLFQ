@@ -2,11 +2,11 @@
 import <-
 function(ms_filenames, ms_filetype, ...) UseMethod("import")
 
-import.default <- function(ms_filenames, ms_filetype, concentration_filename=NA, fasta = NA, targeted_fdr=0.01, spectral_prob=0.95, target_column="ADJNSAF", mergeruns=FALSE, sumruns=FALSE, replace_run_id=FALSE, filtertop=TRUE, removedecoys=TRUE,...) {
+import.default <- function(ms_filenames, ms_filetype, concentration_filename=NA, targeted_fdr=0.01, spectral_prob=0.95, target_column="ADJNSAF", mergeruns=FALSE, sumruns=FALSE, replace_run_id=FALSE, filtertop=TRUE, removedecoys=TRUE, runsplit="~", ...) {
 	transition_intensity <- peptide_intensity <- protein_intensity <- NULL
 
-	if (!ms_filetype %in% c("skyline","openswath","mprophet","openmslfq","abacus_peptide","abacus_protein")) {
-		stop("Please select a valid filetype. Options: \"skyline\", \"openswath\", \"mprophet\", \"openmslfq\", \"abacus_peptide\", \"abacus_protein\"")
+	if (!ms_filetype %in% c("skyline","openswath","mprophet","openmslfq","abacus","pepxml2csv")) {
+		stop("Please select a valid filetype. Options: \"skyline\", \"openswath\", \"mprophet\", \"openmslfq\", \"abacus\", \"pepxml2csv\"")
 	}
 	
 	# ms_filenames must be provided as vector and are converted to a list
@@ -71,22 +71,9 @@ import.default <- function(ms_filenames, ms_filetype, concentration_filename=NA,
 		}
 		data <- subset(data.ms,is.finite(peptide_intensity))
 	}
-	# Abacus peptide import is facilitated from the Abacus with peptide output settings
-	else if (ms_filetype=="abacus_peptide") {
-		data.ms <- abacus_peptide_converter.import(ms_filenames, prob=spectral_prob, fasta=fasta)
-		if (mergeruns==TRUE){
-			data.ms <- mergeruns.import(data.ms,target="peptide_intensity")
-			data.ms$run_id <- "merged"
-		}
-		if (sumruns==TRUE){
-			data.ms <- sumruns.import(data.ms,target="peptide_intensity")
-			data.ms$run_id <- "summed"
-		}
-		data <- subset(data.ms,is.finite(peptide_intensity))
-	}
 	# Abacus protein import is facilitated from the Abacus with default output settings
-	else if (ms_filetype=="abacus_protein") {
-		data.ms <- abacus_protein_converter.import(ms_filenames, prob=spectral_prob, target_column=target_column)
+	else if (ms_filetype=="abacus") {
+		data.ms <- abacus_converter.import(ms_filenames, prob=spectral_prob, target_column=target_column)
 		if (mergeruns==TRUE){
 			data.ms <- mergeruns.import(data.ms,target="protein_intensity")
 			data.ms$run_id <- "merged"
@@ -96,6 +83,18 @@ import.default <- function(ms_filenames, ms_filetype, concentration_filename=NA,
 			data.ms$run_id <- "summed"
 		}
 		data <- subset(data.ms,is.finite(protein_intensity))
+	}
+	else if (ms_filetype=="pepxml2csv") {
+		data.ms <- pepxml2csv_converter.import(ms_filenames, prob=spectral_prob, runsplit=runsplit)
+		if (mergeruns==TRUE){
+			data.ms <- mergeruns.import(data.ms,target="protein_intensity")
+			data.ms$run_id <- "merged"
+		}
+		if (sumruns==TRUE){
+			data.ms <- sumruns.import(data.ms,target="protein_intensity")
+			data.ms$run_id <- "summed"
+		}
+		data <- subset(data.ms,is.finite(peptide_intensity))
 	}
 
 	if ("peptide_sequence" %in% names(data)) {
@@ -263,58 +262,16 @@ openmslfq_transform.import <- function(data, ...) {
 	return(data.trans)
 }
 
-abacus_peptide_converter.import <- function(ms_filenames, prob, fasta, ...)  {
-	if (!is.na(fasta)) {
-		peptide_sequences.fasta <- trypsin(fasta)
-	}
-	else {
-    	stop("Specify FASTA file for ABACUS import.")
-	}
-
+abacus_converter.import <- function(ms_filenames, prob, target_column, ...)  {
 	data.files = lapply(ms_filenames, read.csv, sep="\t", stringsAsFactors=FALSE)
 
-	data.trans<-lapply(data.files,function(X){abacus_peptide_transform.import(X,prob,fasta,peptide_sequences.fasta)})
+	data.trans<-lapply(data.files,function(X){abacus_transform.import(X,prob,target_column)})
 
 	data.ms <- do.call("rbind", data.trans)
 
 	return(data.ms)
 }
-abacus_peptide_transform.import <- function(data, prob, fasta, peptide_sequences.fasta, ...)  {
-
-	data.re<-ldply(lapply(unlist(strsplit(names(data)[grepl("_MAXPROB", names(data))],"_MAXPROB")),function(X){data.frame("RUN"=X,"MODPEP"=data$MODPEP,"CHARGE"=data$CHARGE,"MAXPROB"=data[,paste(X,"MAXPROB",sep="_")],"NSPECS"=data[,paste(X,"NSPECS",sep="_")])}),data.frame)
-	data.filt <- subset(data.re, "MAXPROB" >= prob)
-
-	data.filt$peptide_sequence<-data.filt$MODPEP
-	data.filt$peptide_sequence<-stripsequence.import(data.filt$peptide_sequence)
-							
-	data.ms <- data.filt[,c("RUN","MODPEP","peptide_sequence","CHARGE","NSPECS")]
-	names(data.ms) <- c("run_id","peptide_id","peptide_sequence","precursor_charge","peptide_intensity")
-	
-	names(peptide_sequences.fasta) <- paste(names(peptide_sequences.fasta),"<<remove>>",sep="")
-	peptide_sequences.list <- unlist(peptide_sequences.fasta)
-	
-	peptide_sequences.df <- as.data.frame(sapply(peptide_sequences.list, rbind))
-	
-	peptide_sequences.df$protein_id <- sapply(strsplit(row.names(peptide_sequences.df), "\\|"), "[[", 1)
-	peptide_sequences.df$protein_id_long <- sapply(strsplit(row.names(peptide_sequences.df), "<<remove>>"), "[[", 1)
-	names(peptide_sequences.df) <- c("peptide_sequence","protein_id","protein_id_long")
-	row.names(peptide_sequences.df) <- NULL
-	
-	data.ms <- merge(data.ms,peptide_sequences.df)[,c("run_id","protein_id_long","peptide_id","peptide_sequence","precursor_charge","peptide_intensity")]
-	names(data.ms) <- c("run_id","protein_id","peptide_id","peptide_sequence","precursor_charge","peptide_intensity")
-	return(data.ms)
-}
-
-abacus_protein_converter.import <- function(ms_filenames, prob, target_column, ...)  {
-	data.files = lapply(ms_filenames, read.csv, sep="\t", stringsAsFactors=FALSE)
-
-	data.trans<-lapply(data.files,function(X){abacus_protein_transform.import(X,prob,target_column)})
-
-	data.ms <- do.call("rbind", data.trans)
-
-	return(data.ms)
-}
-abacus_protein_transform.import <- function(data, prob, target_column, ...)  {
+abacus_transform.import <- function(data, prob, target_column, ...)  {
 	PW <- ISFWD <- NULL
 	data.re<-ldply(lapply(unlist(strsplit(names(data)[which(substr(names(data),1,3)!="ALL")][grepl("_ID", names(data)[which(substr(names(data),1,3)!="ALL")])],"_ID")),function(X){data.frame("RUN"=X,"PROTID"=data$PROTID,"PROTLEN"=data$PROTLEN,"ISFWD"=data$ISFWD,"PW"=data[,paste(X,"PW",sep="_")],"NUMSPECSTOT"=data[,paste(X,"NUMSPECSTOT",sep="_")],"TOTNSAF"=data[,paste(X,"TOTNSAF",sep="_")],"NUMSPECSUNIQ"=data[,paste(X,"NUMSPECSUNIQ",sep="_")],"UNIQNSAF"=data[,paste(X,"UNIQNSAF",sep="_")],"NUMSPECSADJ"=data[,paste(X,"NUMSPECSADJ",sep="_")],"ADJNSAF"=data[,paste(X,"ADJNSAF",sep="_")])}),data.frame)
 
@@ -325,6 +282,35 @@ abacus_protein_transform.import <- function(data, prob, target_column, ...)  {
 	names(data.ms) <- c("run_id","protein_id","protein_intensity")
 	
 	return(data.ms)
+}
+
+pepxml2csv_converter.import <- function(ms_filenames, prob, runsplit = "~", ...)  {
+	probability <- peptide_intensity <- NULL
+	data.files = lapply(ms_filenames, read_table.import)
+	data.import <- do.call("rbind", data.files)
+	data.import[which(is.na(data.import$modified_peptide)),]$modified_peptide<-data.import[which(is.na(data.import$modified_peptide)),]$peptide
+	data.import$run_id<-data.frame(do.call(rbind, strsplit(as.vector(data.import$spectrum), split = runsplit)),stringsAsFactors=FALSE)[,1]
+
+	# mProphet headers
+	if ("probability_ip" %in% names(data.import)) {
+		data.ms <- data.table(data.import)[,c("run_id","assumed_charge","peptide","modified_peptide","protein","probability_ip"), with = FALSE]
+		setnames(data.ms,c("run_id","assumed_charge","peptide","modified_peptide","protein","probability_ip"),c("run_id","precursor_charge","peptide_sequence","peptide_id","protein_id","probability"))
+	}
+	else {
+		data.ms <- data.table(data.import)[,c("run_id","assumed_charge","peptide","modified_peptide","protein","probability_pp"), with = FALSE]
+		setnames(data.ms,c("run_id","assumed_charge","peptide","modified_peptide","protein","probability_pp"),c("run_id","precursor_charge","peptide_sequence","peptide_id","protein_id","probability"))
+	}
+
+
+	data.ms<-subset(data.ms,probability >= prob)
+	
+	setkeyv(data.ms,c("run_id","protein_id","peptide_id","peptide_sequence","precursor_charge"))
+
+	data.ms[, peptide_intensity:=1]
+
+	data.ms<-data.ms[, list("peptide_intensity"=sum(peptide_intensity)), by=key(data.ms)]
+
+	return(as.data.frame(data.ms))
 }
 
 stripsequence.import <- function(X, ...) {

@@ -9,12 +9,12 @@
 \tabular{ll}{
 Package: \tab aLFQ\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2013-09-13\cr
-Author: \tab George Rosenberger, Hannes Roest, Barry Grant\cr
+Version: \tab 1.1\cr
+Date: \tab 2013-10-11\cr
+Author: \tab George Rosenberger, Hannes Roest, Christina Ludwig, Barry Grant\cr
 Maintainer: \tab George Rosenberger <rosenberger@imsb.biol.ethz.ch>\cr
 Depends: \tab R (>= 2.15.0), data.table, plyr, caret, seqinr\cr
-Suggests: \tab lattice, randomForest, ROCR\cr
+Suggests: \tab lattice, randomForest, ROCR, reshape2, testthat\cr
 License: \tab GPL version 3 or newer\cr
 URL: \tab \url{http://www.imsb.ethz.ch}\cr
 }

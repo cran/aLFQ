@@ -3,7 +3,7 @@ ALF <- function(data, ...) UseMethod("ALF")
 
 # 1.	Ludwig, C., Claassen, M., Schmidt, A. & Aebersold, R. Estimation of Absolute Protein Quantities of Unlabeled Samples by Selected Reaction Monitoring Mass Spectrometry. Molecular \& Cellular Proteomics 11, M111.013987–M111.013987 (2012).
 
-ALF.default <- function(data, report_filename="ALF_report.pdf", prediction_filename="ALF_prediction.csv", peptide_method = "top", peptide_topx = c(1,2,3,4,5,6), peptide_strictness = "loose", peptide_summary = "sum", transition_topx= c(1,2,3,4,5,6), transition_strictness = "loose", transition_summary = "sum", cval_method = "boot" ,cval_mcx = 1000, combine_precursors = TRUE, ...) {
+ALF.default <- function(data, report_filename="ALF_report.pdf", prediction_filename="ALF_prediction.csv", peptide_method = "top", peptide_topx = c(1,2,3,4,5,6), peptide_strictness = "loose", peptide_summary = "sum", transition_topx= c(1,2,3,4,5,6), transition_strictness = "loose", transition_summary = "sum", cval_method = "boot" ,cval_mcx = 1000, combine_precursors = TRUE, consensus_peptides = TRUE, consensus_transitions = TRUE, ...) {
 	pdf(file=report_filename)
 	
 	# nr_peptides nr_transitions tuning

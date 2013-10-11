@@ -8,16 +8,22 @@
 \method{ProteinInference}{default}(data, peptide_method = "top", peptide_topx = 1,
 peptide_strictness = "loose",peptide_summary = "mean", transition_topx = 3,
 transition_strictness = "loose",transition_summary = "sum", fasta = NA, model = NA,
-combine_precursors = FALSE, ...)
+combine_precursors = FALSE, consensus_peptides = TRUE,
+consensus_transitions = TRUE, ...)
 }
 \arguments{
-  \item{data}{a mandatory data frame containing the columns \code{"run_id"}, \code{"protein_id"}, \code{"peptide_id"}, \code{"peptide_sequence"},
-    \code{"precursor_charge"}, \code{"intensity"}, and \code{"concentration"} for quantification on the peptide level. For quantification 
-    on the transition level, the columns \code{"protein_id"}, \code{"peptide_id"}, \code{"transition_id"}, \code{"peptide_sequence"},
-    \code{"precursor_charge"}, \code{"transition_intensity"} and \code{"concentration"} are required. The id columns can be defined 
-    in any format, while the \code{"intensity"}, \code{"transition_intensity"} and \code{"concentration"} 
-    columns need to be numeric and in non-log form. The data may contain calibration data (with 
-    numeric \code{"concentration"} and test data (with \code{"concentration"} = "?"))}
+  \item{data}{a mandatory data frame containing the columns \code{"run_id"}, 
+    \code{"protein_id"}, \code{"protein_intensity"}, and \code{"concentration"} 
+    for quantification on the protein level. For quantification on the peptide
+    level, the columns \code{"run_id"}, \code{"protein_id"}, \code{"peptide_id"},
+    \code{"peptide_sequence"}, \code{"precursor_charge"}, \code{"peptide_intensity"},
+    and \code{"concentration"} are required. For quantification on the transition level,
+    the columns \code{"protein_id"}, \code{"peptide_id"}, \code{"transition_id"},
+    \code{"peptide_sequence"}, \code{"precursor_charge"}, \code{"transition_intensity"}
+    and \code{"concentration"} are required. The id columns can be defined in any format,
+    while the \code{"_intensity"} and \code{"concentration"} columns need to be numeric
+    and in non-log form. The data may contain calibration data (with numeric
+    \code{"concentration"} and test data (with \code{"concentration"} = "?"))}
   \item{peptide_method}{one of \code{"top"}, \code{"all"}, \code{"iBAQ"}, \code{"APEX"} or \code{"NSAF"} peptide to protein intensity estimation methods.}
   \item{peptide_topx}{a positive integer value of the top x peptides to consider for \code{"top"} methods.}
   \item{peptide_strictness}{whether \code{peptide_topx} should only consider proteins with the minimal peptide
@@ -34,6 +40,8 @@ combine_precursors = FALSE, ...)
     is used for the \code{"iBAQ"}, \code{"APEX"} and \code{"NSAF"} peptide to protein intensity estimation methods.}
   \item{model}{the name of the \code{"APEX"} model to use}
   \item{combine_precursors}{whether to sum all precursors of the same peptide.}
+  \item{consensus_peptides}{if multiple runs are provided, select identical peptides among all runs.}
+  \item{consensus_transitions}{if multiple runs are provided, select identical transitions among all runs.}
   \item{...}{future extensions.}
 }
 

@@ -5,25 +5,27 @@
 \title{import of mass spectrometry proteomics data analysis software reports.}
 \description{import of mass spectrometry proteomics data analysis software reports.}
 \usage{
-\method{import}{default}(ms_filenames, ms_filetype, concentration_filename=NA, fasta = NA,
+\method{import}{default}(ms_filenames, ms_filetype, concentration_filename=NA,
 targeted_fdr=0.01, spectral_prob=0.95, target_column="ADJNSAF", mergeruns=FALSE,
-sumruns=FALSE, replace_run_id=FALSE, filtertop=TRUE, removedecoys=TRUE, ...)
+sumruns=FALSE, replace_run_id=FALSE, filtertop=TRUE, removedecoys=TRUE,
+runsplit="~", ...)
 }
 \arguments{
   \item{ms_filenames}{the paths and filenames of files to import in a character or array class.}
-  \item{ms_filetype}{one of \code{"skyline"}, \code{"openswath"}, \code{"mprophet"}, \code{"openmslfq"}, \code{"abacus_peptide"} or \code{"abacus_protein"} filetypes. Multiple files of the same type can be supplied in a vector.}
+  \item{ms_filetype}{one of \code{"skyline"}, \code{"openswath"}, \code{"mprophet"}, \code{"openmslfq"}, \code{"abacus"},
+  \code{"pepxml2csv"} filetypes. Multiple files of the same type can be supplied in a vector.}
   \item{concentration_filename}{the filename of a csv with concentrations (in any unit). Needs to have 
     the columns \code{"peptide_id"} (or \code{"protein_id"}) and \code{"concentration"}.}
-  \item{fasta}{(abacus_peptide only:) the path and filename to an amino acid fasta file containing the proteins of interest with identical identifier.}
   \item{targeted_fdr}{(openswath and mprophet only:) the FDR cutoff for OpenSWATH and mProphet reports.}
-  \item{spectral_prob}{(abacus_peptide and abacus_protein only:) the spectral probability cutoff for Abacus reports.}
-  \item{target_column}{(abacus_protein only:) target score: one of \code{"NUMSPECSTOT"},\code{"TOTNSAF"},\code{"NUMSPECSUNIQ"},
+  \item{spectral_prob}{(abacus only:) the spectral probability cutoff for Abacus reports.}
+  \item{target_column}{(abacus only:) target score: one of \code{"NUMSPECSTOT"},\code{"TOTNSAF"},\code{"NUMSPECSUNIQ"},
   \code{"UNIQNSAF"},\code{"NUMSPECSADJ"} or \code{"ADJNSAF"}.}
   \item{mergeruns}{whether different MS runs should be merged.}
   \item{sumruns}{whether different MS runs should be summed.}
   \item{replace_run_id}{whether the run_id of the MS data should be replaced by the filename.}
   \item{filtertop}{whether different MS runs should be merged.}
   \item{removedecoys}{(openswath and mprophet only:) whether only the top peakgroup should be considered.}
+  \item{runsplit}{(pepxml2csv only:) the separator of the run_id and spectrum_id column.}
 
   \item{...}{future extensions.}
 }
@@ -50,20 +52,15 @@ Reiter, L. et al. \emph{mProphet: automated data processing and statistical vali
 \seealso{\code{\link{ProteinInference}}, \code{\link{AbsoluteQuantification}}, \code{\link{ALF}}, \code{\link{APEX}}, \code{\link{apexFeatures}}, \code{\link{proteotypic}}}
 
 \examples{
-import(ms_filenames = system.file("extdata","example_abacus_peptide.txt",package="aLFQ"),
-ms_filetype = "abacus_peptide", concentration_filename =
-system.file("extdata","example_concentration_peptide.csv",
-package="aLFQ"), fasta = system.file("extdata","example.fasta",package="aLFQ"), spectral_prob=0.95)
-
 import(ms_filenames = system.file("extdata","example_abacus_protein.txt",package="aLFQ"),
-ms_filetype = "abacus_protein", concentration_filename =
+ms_filetype = "abacus", concentration_filename =
 system.file("extdata","example_concentration_protein.csv",
 package="aLFQ"), spectral_prob=0.95, target_column="ADJNSAF")
 
 import(ms_filenames = system.file("extdata","example_mprophet.txt",package="aLFQ"),
 ms_filetype = "mprophet",
-concentration_filename = system.file("extdata","example_concentration_peptide.csv",package="aLFQ"),
-targeted_fdr=0.01)
+concentration_filename = system.file("extdata","example_concentration_peptide.csv",
+package="aLFQ"), targeted_fdr=0.01)
 
 import(ms_filenames = system.file("extdata","example_openmslfq.csv",package="aLFQ"),
 ms_filetype = "openmslfq", targeted_fdr=0.01)
@@ -73,7 +70,8 @@ ms_filetype = "openswath", targeted_fdr=1)
 
 import(ms_filenames = system.file("extdata","example_skyline.csv",package="aLFQ"),
 ms_filetype = "skyline",
-concentration_filename = system.file("extdata","example_concentration_protein.csv",package="aLFQ"))
+concentration_filename =
+system.file("extdata","example_concentration_protein.csv",package="aLFQ"))
 }
 
 \keyword{ Skyline }

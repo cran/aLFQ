@@ -20,7 +20,9 @@ pcfeatures.apexFeatures <- function(x, ...) {
 	
 	features <- data.frame(peptide_sequence=x[1][[1]], apex=as.factor(x[2][[1]]), stringsAsFactors=FALSE)
 
-	aasequence <- strsplit(features[["peptide_sequence"]],"")[[1]]
+	aasequence <- sapply(strsplit(features[["peptide_sequence"]],"")[[1]],function(X){if(X %in% aaspecies){return(X)}else{return(NA)}})
+	aasequence <- aasequence[!is.na(aasequence)]
+
 	features[["length"]] <- length(aasequence)
 
 	a <- 1
