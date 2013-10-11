@@ -1,20 +1,14 @@
 AbsoluteQuantification <- function(data, ...) UseMethod("AbsoluteQuantification")
 
-AbsoluteQuantification.default <- function(data, peptide_method = "top", peptide_topx = 1, peptide_strictness = "loose", peptide_summary = "mean", transition_topx = 3, transition_strictness = "loose", transition_summary = "sum", fasta = NA, model = NA, total_protein_concentration=1, combine_precursors = FALSE, ...) {
+AbsoluteQuantification.default <- function(data, peptide_method = "top", peptide_topx = 1, peptide_strictness = "loose", peptide_summary = "mean", transition_topx = 3, transition_strictness = "loose", transition_summary = "sum", fasta = NA, model = NA, total_protein_concentration=1, combine_precursors = FALSE, consensus_peptides = TRUE, consensus_transitions = TRUE, ...) {
 
 	object = list()
 
-	data.selection<-ProteinInference(data, peptide_method = peptide_method, peptide_topx = peptide_topx, peptide_strictness = peptide_strictness, peptide_summary = peptide_summary, transition_topx = transition_topx, transition_strictness = transition_strictness, transition_summary = transition_summary, fasta = fasta, model = model, total_protein_concentration=total_protein_concentration, combine_precursors = combine_precursors, ...)
+	data.selection<-ProteinInference(data, peptide_method = peptide_method, peptide_topx = peptide_topx, peptide_strictness = peptide_strictness, peptide_summary = peptide_summary, transition_topx = transition_topx, transition_strictness = transition_strictness, transition_summary = transition_summary, fasta = fasta, model = model, combine_precursors = combine_precursors, consensus_peptides = TRUE, consensus_transitions = TRUE, ...)
 	
-	if (peptide_method=="alm" | peptide_method=="rlm" ) {
-		data.selection$normalized_response <- data.selection$response / sum(data.selection$response)
-		data.selection$normalized_response <- log(data.selection$normalized_response)
-	}
-	else {
-		data.selection$normalized_response <- data.selection$response / sum(data.selection$response)
-		data.selection$response <- log(data.selection$response)
-		data.selection$normalized_response <- log(data.selection$normalized_response)
-	}
+	data.selection$normalized_response <- data.selection$response / sum(data.selection$response)
+	data.selection$response <- log(data.selection$response)
+	data.selection$normalized_response <- log(data.selection$normalized_response)
 	
 	object$is_calibrated <- FALSE
 	
@@ -22,8 +16,8 @@ AbsoluteQuantification.default <- function(data, peptide_method = "top", peptide
 		object$is_calibrated <- TRUE
 		object$calibration <- subset(data.selection,data.selection$concentration != "?")
 		object$calibration$concentration <- log(as.numeric(object$calibration$concentration))
-		object$prediction <- subset(data.selection,data.selection$concentration == "?")
-		#object$prediction <- data.selection
+		# object$prediction <- subset(data.selection,data.selection$concentration == "?")
+		object$prediction <- data.selection
 				
 		object$model <- lm(concentration ~ response,object$calibration)
 		object$mfe <- mean(folderror.AbsoluteQuantification(exp(predict(object$model,object$calibration)),exp(object$calibration$concentration)))
@@ -229,9 +223,9 @@ export.default <- function(x, file, ...)
 export.AbsoluteQuantification <- function(x, file, ...) {
     if (!inherits(x, "AbsoluteQuantification")) stop("Is not a AbsoluteQuantification object")
     if (x$is_calibrated) {
-    	data <- merge(x$prediction[,c("protein_id","response","concentration")],x$estimation)
+    	data <- merge(x$prediction[,c("protein_id","response","concentration")],x$estimation, all=TRUE)
    	    data$response <- exp(data$response)
-  		data$concentration <- exp(data$concentration)
+  		data$concentration <- exp(as.numeric(data$concentration))
     }
     else {
     	data <- x$estimation
@@ -243,3 +237,34 @@ export.AbsoluteQuantification <- function(x, file, ...) {
 	write.csv(data, file = file, ...)
 }
 
+pivot <- function(x, ...)  UseMethod("pivot")
+
+pivot.default <- function(x, ...) {
+    if (!inherits(x, "data.frame")) stop("Is not a data.frame")
+	require(reshape2)
+
+	if ("sec_id" %in% names(x)) {
+		data<-acast(x, protein_id ~ sec_id, value.var="response", fill=0)
+	}
+	else {
+		data<-acast(x, protein_id ~ run_id, value.var="response", fill=0)
+	}	
+
+	return(data)
+}
+
+pivot.AbsoluteQuantification <- function(x, ...) {
+    if (!inherits(x, "AbsoluteQuantification")) stop("Is not a AbsoluteQuantification object")
+	require(reshape2)
+
+    if (x$is_calibrated) {
+    	x$prediction$concentration<-exp(as.numeric(x$prediction$concentration))
+		tdata<-acast(x$prediction, protein_id ~ run_id, value.var="concentration", fill=0)
+    }
+    else {
+     	x$prediction$normalized_concentration<-exp(x$prediction$normalized_concentration)
+		tdata<-acast(x$estimation, protein_id ~ run_id, value.var="normalized_concentration", fill=0)
+    }
+
+	return(tdata)
+}
