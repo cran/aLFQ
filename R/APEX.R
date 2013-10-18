@@ -61,9 +61,11 @@ print.APEX <- function(x, ...) {
 	cat("Testset size: ")
 	cat(dim(x$prediction)[[1]])
 	cat("\n")
-	cat("AUC: ")
-	print(x$cval$roc.auc)
-	cat("\n")
+	if (!is.null(x$cval)){
+		cat("AUC: ")
+		cat(x$cval$roc.auc@y.values[[1]])
+		cat("\n")
+	}
 }
 
 plot.APEX <- function(x, ...) {

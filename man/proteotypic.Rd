@@ -43,7 +43,7 @@ APEX_ORBI.apex <- APEX(data=APEX_ORBI.af)
 
 peptides <- proteotypic(fasta=system.file("extdata","example.fasta",package="aLFQ"),
 model=APEX_ORBI.apex, min_aa=4 , max_aa=20)
-print(peptides)
+\dontrun{print(peptides)}
 }
 
 \keyword{APEX}

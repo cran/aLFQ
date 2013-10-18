@@ -1,5 +1,5 @@
 
-R Under development (unstable) (2013-10-10 r64039) -- "Unsuffered Consequences"
+R Under development (unstable) (2013-10-17 r64066) -- "Unsuffered Consequences"
 Copyright (C) 2013 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin10.8.0 (64-bit)
 
@@ -20,18 +20,6 @@ Type 'q()' to quit R.
 > pkgname <- "aLFQ"
 > source(file.path(R.home("share"), "R", "examples-header.R"))
 > options(warn = 1)
-> base::assign(".ExTimings", "aLFQ-Ex.timings", pos = 'CheckExEnv')
-> base::cat("name\tuser\tsystem\telapsed\n", file=base::get(".ExTimings", pos = 'CheckExEnv'))
-> base::assign(".format_ptime",
-+ function(x) {
-+   if(!is.na(x[4L])) x[1L] <- x[1L] + x[4L]
-+   if(!is.na(x[5L])) x[2L] <- x[2L] + x[5L]
-+   options(OutDec = '.')
-+   format(x[1L:3L], digits = 7L)
-+ },
-+ pos = 'CheckExEnv')
-> 
-> ### * </HEADER>
 > library('aLFQ')
 Loading required package: data.table
 Loading required package: plyr
@@ -60,7 +48,6 @@ The following object is masked from ‘package:plyr’:
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: ALF
 > ### Title: Generate ALF report
 > ### Aliases: ALF ALF.default
@@ -78,15 +65,12 @@ The following object is masked from ‘package:plyr’:
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("ALF", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("APEX")
 > ### * APEX
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: APEX
 > ### Title: Training, testing and validation of APEX peptide observability
 > ###   models
@@ -105,35 +89,17 @@ The following object is masked from ‘package:plyr’:
 Loading required package: randomForest
 randomForest 4.6-7
 Type rfNews() to see new features/changes/bug fixes.
-> APEX_ORBI.apex <- cval(APEX_ORBI.apex, folds=2)
+> print(APEX_ORBI.apex)
+APEX
+Features: 69
+Trainingset size: 50
+Testset size: 
+> 
+> APEX_ORBI_cval.apex <- cval(APEX_ORBI.apex, folds=2)
 Loading required package: ROCR
 Loading required package: gplots
-Loading required package: gtools
-Loading required package: gdata
-gdata: read.xls support for 'XLS' (Excel 97-2004) files ENABLED.
-
-gdata: read.xls support for 'XLSX' (Excel 2007+) files ENABLED.
-
-Attaching package: ‘gdata’
-
-The following object is masked from ‘package:randomForest’:
-
-    combine
-
-The following object is masked from ‘package:stats’:
-
-    nobs
-
-The following object is masked from ‘package:utils’:
-
-    object.size
-
-Loading required package: caTools
-Loading required package: grid
-Loading required package: KernSmooth
 KernSmooth 2.23 loaded
 Copyright M. P. Wand 1997-2009
-Loading required package: MASS
 
 Attaching package: ‘gplots’
 
@@ -141,51 +107,19 @@ The following object is masked from ‘package:stats’:
 
     lowess
 
-> print(APEX_ORBI.apex)
-APEX
-Features: 69
-Trainingset size: 50
-Testset size: 
-AUC: An object of class "performance"
-Slot "x.name":
-[1] "None"
-
-Slot "y.name":
-[1] "Area under the ROC curve"
-
-Slot "alpha.name":
-[1] "none"
-
-Slot "x.values":
-list()
-
-Slot "y.values":
-[[1]]
-[1] 0.7443182
-
-
-Slot "alpha.values":
-list()
-
-
-> plot(APEX_ORBI.apex)
+> plot(APEX_ORBI_cval.apex)
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("APEX", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 
-detaching ‘package:ROCR’, ‘package:gplots’, ‘package:MASS’,
-  ‘package:KernSmooth’, ‘package:grid’, ‘package:caTools’,
-  ‘package:gdata’, ‘package:gtools’, ‘package:randomForest’
+detaching ‘package:ROCR’, ‘package:gplots’, ‘package:randomForest’
 
 > nameEx("APEXMS")
 > ### * APEXMS
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: APEXMS
 > ### Title: Calculating absolute and relative protein abundance from mass
 > ###   spectrometry-based protein expression data.
@@ -198,15 +132,12 @@ detaching ‘package:ROCR’, ‘package:gplots’, ‘package:MASS’,
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("APEXMS", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("AbsoluteQuantification")
 > ### * AbsoluteQuantification
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: AbsoluteQuantification
 > ### Title: Absolute label-free quantification of mass spectrometry
 > ###   proteomics experiments
@@ -224,7 +155,7 @@ detaching ‘package:ROCR’, ‘package:gplots’, ‘package:MASS’,
 > 
 > UPS2_SRM<-head(UPS2_SRM,100) # Remove this line for real applications
 > 
-> data_AbsoluteQuantification <- cval(AbsoluteQuantification(UPS2_SRM),mcx=2)
+> data_AbsoluteQuantification <- predict(cval(AbsoluteQuantification(UPS2_SRM),mcx=2))
 > print(data_AbsoluteQuantification)
 AbsoluteQuantification
 
@@ -240,23 +171,20 @@ Normalized Concentration CV: -86.43073
 > plot(data_AbsoluteQuantification)
 > hist(data_AbsoluteQuantification)
 > pivot(data_AbsoluteQuantification)
-                               UPS2_SRM
-O76070ups|SYUG_HUMAN_UPS   1.566745e+00
-P00167ups|CYB5_HUMAN_UPS   3.160984e+19
-P00709ups|LALBA_HUMAN_UPS  8.912145e+01
-P00915ups|CAH1_HUMAN_UPS  9.959152e+194
+                            UPS2_SRM
+O76070ups|SYUG_HUMAN_UPS    0.599058
+P00167ups|CYB5_HUMAN_UPS  102.347299
+P00709ups|LALBA_HUMAN_UPS   2.604468
+P00915ups|CAH1_HUMAN_UPS  254.519541
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("AbsoluteQuantification", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("LUDWIGMS")
 > ### * LUDWIGMS
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: LUDWIGMS
 > ### Title: Estimation of Absolute Protein Quantities of Unlabeled Samples
 > ###   by Selected Reaction Monitoring Mass Spectrometry..
@@ -269,15 +197,12 @@ P00915ups|CAH1_HUMAN_UPS  9.959152e+194
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("LUDWIGMS", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("ProteinInference")
 > ### * ProteinInference
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: ProteinInference
 > ### Title: Protein inference for aLFQ import data frame
 > ### Aliases: ProteinInference ProteinInference.default
@@ -322,15 +247,12 @@ P00915ups|CAH1_HUMAN_UPS  9.959152e+194
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("ProteinInference", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("UPS2MS")
 > ### * UPS2MS
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: UPS2MS
 > ### Title: Calculating absolute and relative protein abundance from mass
 > ###   spectrometry-based protein expression data.
@@ -343,15 +265,12 @@ P00915ups|CAH1_HUMAN_UPS  9.959152e+194
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("UPS2MS", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("aLFQ.package")
 > ### * aLFQ.package
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: aLFQ-package
 > ### Title: aLFQ
 > ### Aliases: aLFQ-package aLFQ
@@ -363,15 +282,12 @@ P00915ups|CAH1_HUMAN_UPS  9.959152e+194
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("aLFQ.package", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("aa.index")
 > ### * aa.index
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: aa.index
 > ### Title: AAindex: Amino Acid Index Database
 > ### Aliases: aa.index
@@ -467,15 +383,12 @@ V      -0.65     -1.981
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("aa.index", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("apexFeatures")
 > ### * apexFeatures
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: apexFeatures
 > ### Title: Calculation of physicochemical amino acid properties for APEX
 > ### Aliases: apexFeatures apexFeatures.default print.apexFeatures
@@ -503,15 +416,12 @@ Dataset size: 20
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("apexFeatures", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("import")
 > ### * import
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: import
 > ### Title: import of mass spectrometry proteomics data analysis software
 > ###   reports.
@@ -706,15 +616,12 @@ Dataset size: 20
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("import", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("proteotypic")
 > ### * proteotypic
 > 
 > flush(stderr()); flush(stdout())
 > 
-> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: proteotypic
 > ### Title: Prediction of the flyability of proteotypic peptides
 > ### Aliases: proteotypic proteotypic.default
@@ -735,21 +642,15 @@ Type rfNews() to see new features/changes/bug fixes.
 > 
 > peptides <- proteotypic(fasta=system.file("extdata","example.fasta",package="aLFQ"),
 + model=APEX_ORBI.apex, min_aa=4 , max_aa=20)
-> print(peptides)
-  protein_id peptide_sequence  apex
-1   PROTEINA      ANDPEPTIDEA 0.342
-2   PROTEINB         PEPTIDEC 0.228
-3   PROTEINA         PEPTIDEK 0.058
+> ## Not run: print(peptides)
 > 
 > 
 > 
-> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
-> base::cat("proteotypic", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > ### * <FOOTER>
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  6.142 0.248 6.509 0.098 0.014 
+Time elapsed:  5.729 0.189 5.921 0 0 
 > grDevices::dev.off()
 null device 
           1 

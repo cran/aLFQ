@@ -22,7 +22,7 @@
   peptide_strictness = "loose", peptide_summary = "mean", transition_topx = 3,
   transition_strictness = "loose", transition_summary = "sum", fasta = NA,
   model = NA, total_protein_concentration = 1, combine_precursors = FALSE,
-  consensus_peptides = TRUE, consensus_transitions = TRUE, ...)
+  consensus_proteins = TRUE, consensus_peptides = TRUE, consensus_transitions = TRUE, ...)
 \method{cval}{AbsoluteQuantification}(object, cval_method = "mc", mcx = 1000, ...)
 \method{print}{AbsoluteQuantification}(x, ...)
 \method{plot}{AbsoluteQuantification}(x, ...)
@@ -62,6 +62,7 @@
   \item{combine_precursors}{whether to sum all precursors of the same peptide.}
   \item{object}{an \code{AbsoluteQuantification} object.}
   \item{cval_method}{a method for doing crossvalidation: \code{"boot"} (bootstrapping), \code{"mc"} (monte carlo cross-validation), \code{"loo"} (leaving-one-out).}
+  \item{consensus_proteins}{if multiple runs are provided, select identical proteins among all runs.}
   \item{consensus_peptides}{if multiple runs are provided, select identical peptides among all runs.}
   \item{consensus_transitions}{if multiple runs are provided, select identical transitions among all runs.}
   \item{mcx}{a positive integer value of the number of folds for cross-validation.}
@@ -96,7 +97,7 @@ data(UPS2MS)
 
 UPS2_SRM<-head(UPS2_SRM,100) # Remove this line for real applications
 
-data_AbsoluteQuantification <- cval(AbsoluteQuantification(UPS2_SRM),mcx=2)
+data_AbsoluteQuantification <- predict(cval(AbsoluteQuantification(UPS2_SRM),mcx=2))
 print(data_AbsoluteQuantification)
 plot(data_AbsoluteQuantification)
 hist(data_AbsoluteQuantification)

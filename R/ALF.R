@@ -3,7 +3,7 @@ ALF <- function(data, ...) UseMethod("ALF")
 
 # 1.	Ludwig, C., Claassen, M., Schmidt, A. & Aebersold, R. Estimation of Absolute Protein Quantities of Unlabeled Samples by Selected Reaction Monitoring Mass Spectrometry. Molecular \& Cellular Proteomics 11, M111.013987–M111.013987 (2012).
 
-ALF.default <- function(data, report_filename="ALF_report.pdf", prediction_filename="ALF_prediction.csv", peptide_method = "top", peptide_topx = c(1,2,3,4,5,6), peptide_strictness = "loose", peptide_summary = "sum", transition_topx= c(1,2,3,4,5,6), transition_strictness = "loose", transition_summary = "sum", cval_method = "boot" ,cval_mcx = 1000, combine_precursors = TRUE, consensus_peptides = TRUE, consensus_transitions = TRUE, ...) {
+ALF.default <- function(data, report_filename="ALF_report.pdf", prediction_filename="ALF_prediction.csv", peptide_method = "top", peptide_topx = c(1,2,3,4,5,6), peptide_strictness = "loose", peptide_summary = "sum", transition_topx= c(1,2,3,4,5,6), transition_strictness = "loose", transition_summary = "sum", cval_method = "boot" ,cval_mcx = 1000, combine_precursors = TRUE, consensus_proteins = TRUE, consensus_peptides = TRUE, consensus_transitions = TRUE, ...) {
 	pdf(file=report_filename)
 	
 	# nr_peptides nr_transitions tuning
@@ -14,7 +14,7 @@ ALF.default <- function(data, report_filename="ALF_report.pdf", prediction_filen
 	performanceplot.ALF(data.tune)
 		
 	# calculate optimal model
-	optimal.AbsoluteQuantification <- AbsoluteQuantification(data, peptide_method = peptide_method, peptide_topx = peptide_topx_min, peptide_strictness = peptide_strictness, peptide_summary = peptide_summary, transition_topx = transition_topx_min, transition_strictness = transition_strictness, transition_summary = transition_summary, combine_precursors = combine_precursors)		
+	optimal.AbsoluteQuantification <- AbsoluteQuantification(data, peptide_method = peptide_method, peptide_topx = peptide_topx_min, peptide_strictness = peptide_strictness, peptide_summary = peptide_summary, transition_topx = transition_topx_min, transition_strictness = transition_strictness, transition_summary = transition_summary, combine_precursors = combine_precursors, consensus_proteins = consensus_proteins, consensus_peptides = consensus_peptides, consensus_transitions = consensus_transitions)
 	optimal.AbsoluteQuantification <- predict(optimal.AbsoluteQuantification)
 	plot(optimal.AbsoluteQuantification)
 	

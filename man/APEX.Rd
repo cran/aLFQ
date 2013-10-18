@@ -50,9 +50,9 @@ data(APEXMS)
 APEX_ORBI<-head(APEX_ORBI,50) # Remove this line for real applications
 APEX_ORBI.af <- apexFeatures(APEX_ORBI)
 APEX_ORBI.apex <- APEX(data=APEX_ORBI.af)
-APEX_ORBI.apex <- cval(APEX_ORBI.apex, folds=2)
 print(APEX_ORBI.apex)
-plot(APEX_ORBI.apex)
-}
 
-\keyword{APEX}
+APEX_ORBI_cval.apex <- cval(APEX_ORBI.apex, folds=2)
+plot(APEX_ORBI_cval.apex)
+}
+\keyword{ APEX }

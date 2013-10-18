@@ -1,21 +1,21 @@
 # Protein inference for aLFQ import data frame
 ProteinInference <- function(data, ...)  UseMethod("ProteinInference")
 
-ProteinInference.default <- function(data, peptide_method = "top", peptide_topx = 1, peptide_strictness = "loose", peptide_summary = "mean", transition_topx = 3, transition_strictness = "loose", transition_summary = "sum", fasta = NA, model = NA, combine_precursors = FALSE, consensus_peptides = TRUE, consensus_transitions = TRUE, ...) {
-	peptide_sequence <- concentration <- peptide_intensity <- stringsAsFactors <- NULL
+ProteinInference.default <- function(data, peptide_method = "top", peptide_topx = 1, peptide_strictness = "loose", peptide_summary = "mean", transition_topx = 3, transition_strictness = "loose", transition_summary = "sum", fasta = NA, model = NA, combine_precursors = FALSE, consensus_proteins = TRUE, consensus_peptides = TRUE, consensus_transitions = TRUE, ...) {
+	peptide_sequence <- concentration <- peptide_intensity <- NULL
 
 	data <- data.table(data)
 
 	# if the data is on the transition level
 	if ("transition_intensity" %in% names(data)) {
-		peptide <- peptide_inference.ProteinInference(data, transition_topx = transition_topx, transition_strictness = transition_strictness, transition_summary = transition_summary, consensus_transitions = consensus_transitions)
+		peptide <- peptide_inference.ProteinInference(data, transition_topx = transition_topx, transition_strictness = transition_strictness, transition_summary = transition_summary, consensus_proteins = consensus_proteins, consensus_transitions = consensus_transitions)
 	}
 	else {
 		peptide <- data
 	}
 
 	# if the aLFQ import data frame contains any anchor peptides (not proteins!), the concentrations of the according endogenous peptides (and proteins) is inferred
-	if (dim(unique(peptide[,c("protein_id","concentration"), with = FALSE]))[1]!=dim(unique(peptide[,c("protein_id"), with = FALSE]))[1]) {
+	if (dim(unique(peptide[,c("run_id","protein_id","concentration"), with = FALSE]))[1]!=dim(unique(peptide[,c("run_id","protein_id"), with = FALSE]))[1]) {
 		# first step: all peptides with the same sequence as the anchor peptides are selected
 	
 		setkeyv(peptide,c("run_id","protein_id","peptide_id"))
@@ -32,13 +32,13 @@ ProteinInference.default <- function(data, peptide_method = "top", peptide_topx 
 
 		conc_proteins<-conc_proteins[, list("concentration"=mean(concentration)), by=key(conc_proteins)]
 
-		peptide<-merge(subset(peptide,concentration=="?")[,concentration:=NULL][,stringsAsFactors:=NULL],conc_proteins, by=c("run_id","protein_id"), all.x=TRUE)
+		peptide<-merge(subset(peptide,concentration=="?")[,concentration:=NULL],conc_proteins, by=c("run_id","protein_id"), all.x=TRUE)
 		peptide$concentration[ is.na(peptide$concentration) ] <- "?"
 	}
 
 	# if the data is on the peptide level
 	if ("peptide_intensity" %in% names(peptide)) {
-		protein <- protein_inference.ProteinInference(peptide, peptide_method = peptide_method, peptide_topx = peptide_topx, peptide_strictness = peptide_strictness, peptide_summary = peptide_summary, fasta = fasta, model = model, combine_precursors = combine_precursors, consensus_peptides = consensus_peptides)
+		protein <- protein_inference.ProteinInference(peptide, peptide_method = peptide_method, peptide_topx = peptide_topx, peptide_strictness = peptide_strictness, peptide_summary = peptide_summary, fasta = fasta, model = model, combine_precursors = combine_precursors, consensus_proteins = consensus_proteins, consensus_peptides = consensus_peptides)
 	}
 	else {
 		protein <- peptide
@@ -57,8 +57,8 @@ ProteinInference.default <- function(data, peptide_method = "top", peptide_topx 
 	return(data.frame(result))
 }
 
-protein_inference.ProteinInference <- function(data.dt, peptide_method = "top", peptide_topx = 1, peptide_strictness = "loose", peptide_summary = "mean", fasta = NA, model = NA, combine_precursors = FALSE, consensus_peptides = TRUE, ...) {
-	run_id <- protein_id <- peptide_id <- precursor_charge <- omni <- peptide_intensity <- mean_peptide_intensity <- min_mean_peptide_intensity <- protein_sequence <- protein_sequence_length <- concentration <- NULL
+protein_inference.ProteinInference <- function(data.dt, peptide_method = "top", peptide_topx = 1, peptide_strictness = "loose", peptide_summary = "mean", fasta = NA, model = NA, combine_precursors = FALSE, consensus_proteins = TRUE, consensus_peptides = TRUE, ...) {
+	run_id <- protein_id <- peptide_id <- precursor_charge <- omni <- omni_reference <- peptide_intensity <- mean_peptide_intensity <- min_mean_peptide_intensity <- protein_sequence <- protein_sequence_length <- concentration <- NULL
 
 	if (!is.na(fasta)) {
 		peptide_sequences.fasta <- trypsin(fasta)
@@ -69,9 +69,17 @@ protein_inference.ProteinInference <- function(data.dt, peptide_method = "top", 
 		# only use peptide_ids that occur in all run_ids
 		setkeyv(data.dt,c("protein_id","peptide_id","precursor_charge"))
 
-		omni.dt<-data.dt[, list("omni"=if(dim(unique(cbind(run_id,protein_id,peptide_id,precursor_charge)))[1]==length(unique(data.dt$run_id))){TRUE}else{FALSE}), by=key(data.dt)]
+		omni.dt <- data.dt[, list("omni" = length(run_id)), by = key(data.dt)]
 
-		data.dt <- subset(data.dt[omni.dt],omni == TRUE)
+		data.dt<-data.dt[omni.dt]
+
+		if (consensus_proteins) {
+			data.dt<-subset(data.dt, omni == length(unique(data.dt$run_id)))
+		}
+		else {
+			omni_reference.dt <- data.dt[, list("omni_reference" = length(unique(run_id))), by = protein_id]
+			data.dt<-data.dt[omni_reference.dt][omni == omni_reference,]
+		}
 	}
 
 	# should precursors be summed?
@@ -159,18 +167,29 @@ protein_inference.ProteinInference <- function(data.dt, peptide_method = "top", 
 	return(data.dt)
 }
 
-peptide_inference.ProteinInference <- function(data.dt, transition_topx = 3, transition_strictness = "loose", transition_summary = "sum", consensus_transitions = TRUE, ...) {
-	run_id <- protein_id <- peptide_id <- precursor_charge <- transition_id <- omni <- transition_intensity <- mean_transition_intensity <- min_mean_transition_intensity <- NULL
+peptide_inference.ProteinInference <- function(data.dt, transition_topx = 3, transition_strictness = "loose", transition_summary = "sum", consensus_proteins = TRUE, consensus_transitions = TRUE, ...) {
+	run_id <- protein_id <- peptide_id <- precursor_charge <- transition_id <- omni <- omni_reference <- transition_intensity <- mean_transition_intensity <- min_mean_transition_intensity <- NULL
+
 
 	# consensus filter
 	if (consensus_transitions){
 		# only use transition_ids that occur in all run_ids
 		setkeyv(data.dt,c("protein_id","peptide_id","precursor_charge","transition_id"))
 
-		omni.dt<-data.dt[, list("omni"=if(dim(unique(cbind(run_id,protein_id,peptide_id,precursor_charge,transition_id)))[1]==length(unique(data.dt$run_id))){TRUE}else{FALSE}), by=key(data.dt)]
+		omni.dt <- data.dt[, list("omni" = length(run_id)), by = key(data.dt)]
+
+		data.dt<-data.dt[omni.dt]
+
+		if (consensus_proteins) {
+			data.dt<-subset(data.dt, omni == length(unique(data.dt$run_id)))
+		}
+		else {
+			omni_reference.dt <- data.dt[, list("omni_reference" = length(unique(run_id))), by = protein_id]
+			data.dt<-data.dt[omni_reference.dt][omni == omni_reference,]
+		}
 
 		# calculate mean of per transition_id
-		mean_transitions.dt <- subset(data.dt[omni.dt],omni == TRUE)[, list("mean_transition_intensity"=mean(transition_intensity)), by=key(data.dt)]
+		mean_transitions.dt <- data.dt[, list("mean_transition_intensity"=mean(transition_intensity)), by=key(data.dt)]
 
 		data.dt<-data.dt[mean_transitions.dt]
 		setkeyv(data.dt,c("run_id","protein_id","peptide_id","precursor_charge"))
