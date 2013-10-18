@@ -8,7 +8,7 @@
 \method{ProteinInference}{default}(data, peptide_method = "top", peptide_topx = 1,
 peptide_strictness = "loose",peptide_summary = "mean", transition_topx = 3,
 transition_strictness = "loose",transition_summary = "sum", fasta = NA, model = NA,
-combine_precursors = FALSE, consensus_peptides = TRUE,
+combine_precursors = FALSE, consensus_proteins = TRUE, consensus_peptides = TRUE,
 consensus_transitions = TRUE, ...)
 }
 \arguments{
@@ -40,6 +40,7 @@ consensus_transitions = TRUE, ...)
     is used for the \code{"iBAQ"}, \code{"APEX"} and \code{"NSAF"} peptide to protein intensity estimation methods.}
   \item{model}{the name of the \code{"APEX"} model to use}
   \item{combine_precursors}{whether to sum all precursors of the same peptide.}
+  \item{consensus_proteins}{if multiple runs are provided, select identical proteins among all runs.}
   \item{consensus_peptides}{if multiple runs are provided, select identical peptides among all runs.}
   \item{consensus_transitions}{if multiple runs are provided, select identical transitions among all runs.}
   \item{...}{future extensions.}

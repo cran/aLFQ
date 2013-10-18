@@ -1,9 +1,13 @@
 apexFeatures <- function(x, ...) UseMethod("apexFeatures")
 
 apexFeatures.default <- function(x, ...) {
+	if (class(x)!="data.frame" || dim(x)[1] < 1 || dim(x)[2] != 2 || sort(names(x)) != c("apex","peptide_sequence")) {stop("The input for apexFeatures is a mandatory data frame containing the variables in the model. The data frame requires the columns \"peptide_sequence\", \"apex\". The data may contain training data (with boolean \"apex\" and test data (with \"apex\"=NA))", call. = FALSE)}
+
 	x <- unique(x)
 	
 	object<-as.data.frame(rbindlist(apply(x,1,pcfeatures.apexFeatures)))
+
+	object$apex<-as.factor(object$apex)
 	
 	class(object) <- "apexFeatures"
 	
@@ -18,7 +22,7 @@ pcfeatures.apexFeatures <- function(x, ...) {
 
 	featurelist <- c("FASG760101","CHOP780201","CHOP780202","CHOP780203","WERD780101","ZIMJ680104","KLEP840101","EISD860102","FAUJ880111","VINM940101","FAUJ880103","GUYH850105","NOZY710101")
 	
-	features <- data.frame(peptide_sequence=x[1][[1]], apex=as.factor(x[2][[1]]), stringsAsFactors=FALSE)
+	features <- data.frame(peptide_sequence=x[1][[1]], apex=x[2][[1]], stringsAsFactors=FALSE)
 
 	aasequence <- sapply(strsplit(features[["peptide_sequence"]],"")[[1]],function(X){if(X %in% aaspecies){return(X)}else{return(NA)}})
 	aasequence <- aasequence[!is.na(aasequence)]

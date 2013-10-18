@@ -9,7 +9,8 @@
 peptide_method = "top", peptide_topx = c(1,2,3,4,5,6), peptide_strictness = "loose",
 peptide_summary = "sum", transition_topx= c(1,2,3,4,5,6), transition_strictness = "loose",
 transition_summary = "sum", cval_method = "boot", cval_mcx = 1000,
-combine_precursors = TRUE, consensus_peptides = TRUE, consensus_transitions = TRUE, ...)
+combine_precursors = TRUE, consensus_proteins = TRUE, consensus_peptides = TRUE,
+consensus_transitions = TRUE, ...)
 }
 \arguments{
   \item{data}{a mandatory data frame containing the columns \code{"run_id"}, 
@@ -41,6 +42,7 @@ combine_precursors = TRUE, consensus_peptides = TRUE, consensus_transitions = TR
   \item{cval_method}{a method for doing crossvalidation: \code{"boot"} (bootstrapping), \code{"mc"} (monte carlo cross-validation), \code{"loo"} (leaving-one-out).}
   \item{cval_mcx}{a positive integer value of the number of folds for cross-validation.}
   \item{combine_precursors}{whether to pool all precursors of the same peptide.}
+  \item{consensus_proteins}{if multiple runs are provided, select identical proteins among all runs.}
   \item{consensus_peptides}{if multiple runs are provided, select identical peptides among all runs.}
   \item{consensus_transitions}{if multiple runs are provided, select identical transitions among all runs.}
   \item{...}{future extensions.}

@@ -1,10 +1,10 @@
 AbsoluteQuantification <- function(data, ...) UseMethod("AbsoluteQuantification")
 
-AbsoluteQuantification.default <- function(data, peptide_method = "top", peptide_topx = 1, peptide_strictness = "loose", peptide_summary = "mean", transition_topx = 3, transition_strictness = "loose", transition_summary = "sum", fasta = NA, model = NA, total_protein_concentration=1, combine_precursors = FALSE, consensus_peptides = TRUE, consensus_transitions = TRUE, ...) {
+AbsoluteQuantification.default <- function(data, peptide_method = "top", peptide_topx = 1, peptide_strictness = "loose", peptide_summary = "mean", transition_topx = 3, transition_strictness = "loose", transition_summary = "sum", fasta = NA, model = NA, total_protein_concentration=1, combine_precursors = FALSE, consensus_proteins = TRUE, consensus_peptides = TRUE, consensus_transitions = TRUE, ...) {
 
 	object = list()
 
-	data.selection<-ProteinInference(data, peptide_method = peptide_method, peptide_topx = peptide_topx, peptide_strictness = peptide_strictness, peptide_summary = peptide_summary, transition_topx = transition_topx, transition_strictness = transition_strictness, transition_summary = transition_summary, fasta = fasta, model = model, combine_precursors = combine_precursors, consensus_peptides = TRUE, consensus_transitions = TRUE, ...)
+	data.selection<-ProteinInference(data, peptide_method = peptide_method, peptide_topx = peptide_topx, peptide_strictness = peptide_strictness, peptide_summary = peptide_summary, transition_topx = transition_topx, transition_strictness = transition_strictness, transition_summary = transition_summary, fasta = fasta, model = model, combine_precursors = combine_precursors, consensus_proteins = consensus_proteins, consensus_peptides = consensus_peptides, consensus_transitions = consensus_transitions, ...)
 	
 	data.selection$normalized_response <- data.selection$response / sum(data.selection$response)
 	data.selection$response <- log(data.selection$response)
@@ -18,6 +18,7 @@ AbsoluteQuantification.default <- function(data, peptide_method = "top", peptide
 		object$calibration$concentration <- log(as.numeric(object$calibration$concentration))
 		# object$prediction <- subset(data.selection,data.selection$concentration == "?")
 		object$prediction <- data.selection
+		object$prediction$concentration<-"?"
 				
 		object$model <- lm(concentration ~ response,object$calibration)
 		object$mfe <- mean(folderror.AbsoluteQuantification(exp(predict(object$model,object$calibration)),exp(object$calibration$concentration)))
@@ -173,8 +174,8 @@ plot.AbsoluteQuantification <- function(x, ...) {
 
     if (!inherits(x, "AbsoluteQuantification")) stop("Is not a AbsoluteQuantification object")
     if (!x$is_calibrated) stop("Method not supported for AbsoluteQuantification objects without calibration proteins.")
-	if (dim(subset(x$prediction,concentration == "?"))[1] == 0) {
-		plot(data.frame(log10(exp(x$calibration$response)),log10(exp(x$calibration$concentration))),col="red",xlab='log10(intensity)',ylab='log10(concentration)',xlim=c(min(log10(exp(as.numeric(x$calibration$response)))),max(log10(exp(as.numeric(x$calibration$response))))),ylim=c(min(log10(exp(as.numeric(x$calibration$concentration)))),max(log10(exp(as.numeric(x$calibration$concentration))))))
+	if (dim(subset(x$prediction,concentration == "?"))[1] > 0) {
+		plot(data.frame(log10(exp(x$calibration$response)),log10(exp(as.numeric(x$calibration$concentration)))),col="red",xlab='log10(intensity)',ylab='log10(concentration)',xlim=c(min(log10(exp(as.numeric(x$calibration$response)))),max(log10(exp(as.numeric(x$calibration$response))))),ylim=c(min(log10(exp(as.numeric(x$calibration$concentration)))),max(log10(exp(as.numeric(x$calibration$concentration))))))
 		log10_model <-x$model
 		log10_model$coefficients[1] <- log10(exp(log10_model$coefficients[1]))
 		abline(log10_model, col="red")
@@ -185,10 +186,10 @@ plot.AbsoluteQuantification <- function(x, ...) {
 			title(paste('CV-MFE:',format(x$cv$mfe, digits=4),'CV-RSQ:',format(x$cv$r.squared, digits=4)))
 		}
 	}
-	else if (dim(subset(x$prediction,concentration == "?"))[1] > 0) {
-		calibration.df <- data.frame(x$calibration$response,x$calibration$concentration)
+	else if (dim(subset(x$prediction,concentration == "?"))[1] == 0) {
+		calibration.df <- data.frame(x$calibration$response,as.numeric(x$calibration$concentration))
 		names(calibration.df) <- c("response","concentration")
-		prediction.df <- data.frame(x$prediction$response,x$prediction$concentration)
+		prediction.df <- data.frame(x$prediction$response,as.numeric(x$prediction$concentration))
 		names(prediction.df) <- c("response","concentration")
 		merged <- rbind(calibration.df,prediction.df)
 		merged <- subset(merged,is.finite(concentration) & is.finite(response))
@@ -209,6 +210,8 @@ plot.AbsoluteQuantification <- function(x, ...) {
 hist.AbsoluteQuantification <- function(x, ...) {
     if (!inherits(x, "AbsoluteQuantification")) stop("Is not a AbsoluteQuantification object")
     if (!x$is_calibrated) stop("Method not supported for AbsoluteQuantification objects without calibration proteins.")
+    if (is.null(x$cval)) stop("Apply cval method to object before plotting the histogram.")
+
 	hist(x$cval$mfe_array, freq=FALSE,main=paste('Histogram of MFE\nMean = ',format(mean(x$cval$mfe_array), digits=4), ", 95% CI =", format(1.96*sd(x$cval$mfe_array), digits=4) ), breaks = 40, xlab="mean fold error")
 	xfit = seq(min(x$cval$mfe_array), max(x$cval$mfe_array),length=40)
 	yfit = dnorm(xfit, mean=mean(x$cval$mfe_array), sd=sd(x$cval$mfe_array))
@@ -255,6 +258,7 @@ pivot.default <- function(x, ...) {
 
 pivot.AbsoluteQuantification <- function(x, ...) {
     if (!inherits(x, "AbsoluteQuantification")) stop("Is not a AbsoluteQuantification object")
+    if ("?" %in% x$prediction$concentration) stop("Apply predict before pivot to AbsoluteQuantification object")
 	require(reshape2)
 
     if (x$is_calibrated) {
