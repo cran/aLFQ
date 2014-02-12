@@ -1,16 +1,12 @@
 proteotypic <- function(fasta, ...) UseMethod("proteotypic")
 
-proteotypic.default <- function(fasta, model, min_aa=4 , max_aa=20, ...) {
+proteotypic.default <- function(fasta, apex_model, min_aa=4 , max_aa=20, ...) {
 	peptide_sequence_length <- peptide_sequence <- NULL
-
-	# load(system.file("extdata",paste(model,".rda",sep=""),package="aLFQ", mustWork = TRUE))
 
 	peptides.fasta <- trypsin(fasta)
 
 	peptides <- ldply(peptides.fasta, function(x) ldply(x))
 	names(peptides) <- c("protein_id","peptide_sequence")
-
-	peptides <- data.table(peptides)
 
 	nonproteotypic <- peptides[duplicated(peptides$peptide_sequence),]$peptide_sequence
 	peptides$peptide_sequence_length<-nchar(peptides$peptide_sequence)
@@ -24,8 +20,7 @@ proteotypic.default <- function(fasta, model, min_aa=4 , max_aa=20, ...) {
 	peptides.natfilt <- peptides.natfilt[!grepl("Z", peptides.natfilt$peptide_sequence),]
 
 	peptide_sequences.af <- apexFeatures(data.frame("peptide_sequence" = peptides.natfilt$peptide_sequence, "apex"=NA, stringsAsFactors=FALSE))
-    # peptide_sequences.apex <- predict(eval(parse(text=model)),peptide_sequences.af)
-    peptide_sequences.apex <- predict(model,peptide_sequences.af)
+    peptide_sequences.apex <- predict(apex_model,peptide_sequences.af)
 
     peptide_apex <- peptide_sequences.apex$prediction[,c("peptide_sequence","apex")]
 

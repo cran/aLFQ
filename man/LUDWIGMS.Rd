@@ -1,4 +1,5 @@
 \name{LUDWIGMS}
+\alias{LUDWIGMS}
 \alias{LUDWIG_SRM}
 \docType{data}
 \title{Estimation of Absolute Protein Quantities of Unlabeled Samples by Selected Reaction Monitoring Mass Spectrometry..}

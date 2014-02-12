@@ -1,10 +1,11 @@
 AbsoluteQuantification <- function(data, ...) UseMethod("AbsoluteQuantification")
 
-AbsoluteQuantification.default <- function(data, peptide_method = "top", peptide_topx = 1, peptide_strictness = "loose", peptide_summary = "mean", transition_topx = 3, transition_strictness = "loose", transition_summary = "sum", fasta = NA, model = NA, total_protein_concentration=1, combine_precursors = FALSE, consensus_proteins = TRUE, consensus_peptides = TRUE, consensus_transitions = TRUE, ...) {
+AbsoluteQuantification.default <- function(data, total_protein_concentration=1, ...) {
+    if (length(setdiff(c("run_id","protein_id","concentration","response"),names(data))) > 0) stop("No suitable input for AbsoluteQuantification. Did you use ProteinInference on your data.frame?")	
 
 	object = list()
 
-	data.selection<-ProteinInference(data, peptide_method = peptide_method, peptide_topx = peptide_topx, peptide_strictness = peptide_strictness, peptide_summary = peptide_summary, transition_topx = transition_topx, transition_strictness = transition_strictness, transition_summary = transition_summary, fasta = fasta, model = model, combine_precursors = combine_precursors, consensus_proteins = consensus_proteins, consensus_peptides = consensus_peptides, consensus_transitions = consensus_transitions, ...)
+	data.selection<-data
 	
 	data.selection$normalized_response <- data.selection$response / sum(data.selection$response)
 	data.selection$response <- log(data.selection$response)
@@ -16,7 +17,6 @@ AbsoluteQuantification.default <- function(data, peptide_method = "top", peptide
 		object$is_calibrated <- TRUE
 		object$calibration <- subset(data.selection,data.selection$concentration != "?")
 		object$calibration$concentration <- log(as.numeric(object$calibration$concentration))
-		# object$prediction <- subset(data.selection,data.selection$concentration == "?")
 		object$prediction <- data.selection
 		object$prediction$concentration<-"?"
 				
@@ -29,18 +29,6 @@ AbsoluteQuantification.default <- function(data, peptide_method = "top", peptide
 	data.selection$normalized_concentration <- data.selection$normalized_response + log(total_protein_concentration)
 	object$estimation <- data.selection[,c("run_id","protein_id","normalized_response","normalized_concentration")]
 	object$normalized_concentration_covar <- (100*sd(data.selection$normalized_response)) / mean(data.selection$normalized_response)
-	
-	object$peptide_method = peptide_method
-	object$peptide_topx = peptide_topx
-	object$peptide_strictness = peptide_strictness
-	object$peptide_summary = peptide_summary
-	object$transition_topx = transition_topx
-	object$transition_strictness = transition_strictness
-	object$transition_summary = transition_summary
-	object$transition_strictness = transition_strictness
-	object$fasta = fasta
-	object$total_protein_concentration = total_protein_concentration
-	object$combine_precursors = combine_precursors
 
 	class(object) <- "AbsoluteQuantification"
 	return(object)

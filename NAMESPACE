@@ -1,4 +1,22 @@
-export(AbsoluteQuantification,ProteinInference,APEX,proteotypic,apexFeatures,ALF,cval,import,export,pivot)
+importFrom(data.table,data.table)
+importFrom(data.table,tables)
+importFrom(data.table,setkey)
+importFrom(data.table,setkeyv)
+importFrom(data.table,key)
+importFrom(data.table,as.data.table)
+importFrom(data.table,is.data.table)
+importFrom(data.table,test.data.table)
+importFrom(data.table,":=")
+importFrom(data.table,setnames)
+importFrom(data.table,rbindlist)
+
+importFrom(seqinr,read.fasta)
+importFrom(caret,createFolds)
+importFrom(plyr,ddply)
+importFrom(plyr,ldply)
+importFrom(plyr,.)
+
+export(AbsoluteQuantification,ProteinInference,PeptideInference,APEX,proteotypic,apexFeatures,ALF,cval,import,export,pivot)
 
 S3method(AbsoluteQuantification, default)
 S3method(predict, AbsoluteQuantification)
@@ -9,6 +27,7 @@ S3method(hist, AbsoluteQuantification)
 S3method(export, AbsoluteQuantification)
 
 S3method(ProteinInference, default)
+S3method(PeptideInference, default)
 
 S3method(APEX, default)
 S3method(predict, APEX)
