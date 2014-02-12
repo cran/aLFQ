@@ -1,4 +1,5 @@
 \name{UPS2MS}
+\alias{UPS2MS}
 \alias{UPS2}
 \alias{UPS2_SC}
 \alias{UPS2_LFQ}

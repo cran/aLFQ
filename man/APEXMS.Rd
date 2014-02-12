@@ -1,4 +1,5 @@
 \name{APEXMS}
+\alias{APEXMS}
 \alias{APEX_ORBI}
 \alias{APEX_LCQ}
 \docType{data}
@@ -15,7 +16,7 @@ This dataset contains training ThermoFinnigan LTQ-OrbiTrap (ORBI) and ThermoFinn
  }
 }
 \source{
-\sQuote{The dataset} was obtained from:\cr
+The dataset was obtained from:\cr
 \url{http://marcottelab.org/APEX_Protocol/}.
 }
 \references{

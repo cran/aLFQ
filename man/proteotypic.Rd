@@ -5,11 +5,11 @@
 \title{Prediction of the flyability of proteotypic peptides}
 \description{Prediction of the flyability of proteotypic peptides.}
 \usage{
-\method{proteotypic}{default}(fasta, model, min_aa=4 , max_aa=20, ...)
+\method{proteotypic}{default}(fasta, apex_model, min_aa=4 , max_aa=20, ...)
 }
 \arguments{
   \item{fasta}{a amino acid FASTA file.}
-  \item{model}{an \code{APEX} object.}
+  \item{apex_model}{an \code{APEX} object.}
   \item{min_aa}{the minimum number of amino acids for proteotypic peptides.}
   \item{max_aa}{the maximum number of amino acids for proteotypic peptides.}
 
@@ -42,7 +42,7 @@ APEX_ORBI.af <- apexFeatures(APEX_ORBI)
 APEX_ORBI.apex <- APEX(data=APEX_ORBI.af)
 
 peptides <- proteotypic(fasta=system.file("extdata","example.fasta",package="aLFQ"),
-model=APEX_ORBI.apex, min_aa=4 , max_aa=20)
+apex_model=APEX_ORBI.apex, min_aa=4 , max_aa=20)
 \dontrun{print(peptides)}
 }
 
