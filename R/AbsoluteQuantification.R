@@ -86,8 +86,8 @@ cval.AbsoluteQuantification <- function(object,cval_method="mc",mcx=1000, ...) {
 			
 			j <- j + 1
 		}
-		object$cval$r.squared <- mean(object$cval$rs_array)
-		object$cval$mfe <- mean(object$cval$mfe_array)
+		object$cval$r.squared <- mean(object$cval$rs_array[which(is.finite(object$cval$rs_array))])
+		object$cval$mfe <- mean(object$cval$mfe_array[which(is.finite(object$cval$mfe_array))])
 	}
 	else if (cval_method=="boot") {
 		while (j <= mcx) {
@@ -102,8 +102,8 @@ cval.AbsoluteQuantification <- function(object,cval_method="mc",mcx=1000, ...) {
 			
 			j <- j + 1
 		}
-		object$cval$r.squared <- mean(object$cval$rs_array)
-		object$cval$mfe <- mean(object$cval$mfe_array)
+		object$cval$r.squared <- mean(object$cval$rs_array[which(is.finite(object$cval$rs_array))])
+		object$cval$mfe <- mean(object$cval$mfe_array[which(is.finite(object$cval$mfe_array))])
 	}
 	else if (cval_method=="loo") {
 		j <- 1

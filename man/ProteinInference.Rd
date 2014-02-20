@@ -8,8 +8,9 @@
 \method{ProteinInference}{default}(data, peptide_method = "top", peptide_topx = 2, 
 peptide_strictness = "strict",peptide_summary = "mean", transition_topx = 3, 
 transition_strictness = "strict",transition_summary = "sum", fasta = NA, 
-apex_model = NA, combine_precursors = FALSE, consensus_proteins = TRUE, 
-consensus_peptides = TRUE, consensus_transitions = TRUE, scampi_method = "LSE", 
+apex_model = NA, combine_precursors = FALSE, combine_peptide_sequences = FALSE, 
+consensus_proteins = TRUE, consensus_peptides = TRUE, 
+consensus_transitions = TRUE, scampi_method = "LSE", 
 scampi_iterations = 10, scampi_outliers = FALSE, scampi_outliers_iterations = 2, 
 scampi_outliers_threshold = 2, ...)
 }
@@ -25,6 +26,7 @@ scampi_outliers_threshold = 2, ...)
   \item{fasta}{(\code{"iBAQ"}, \code{"APEX"}, \code{"NSAF"} and \code{"SCAMPI"} only:) the path and filename to an amino acid fasta file containing the proteins of interest.}
   \item{apex_model}{(\code{"APEX"} only:) The \code{"APEX"} model to use (see APEX).}
   \item{combine_precursors}{whether to sum all precursors of the same peptide.}
+  \item{combine_peptide_sequences}{whether to sum all variants (modifications) of the same peptide sequence.}
   \item{consensus_proteins}{if multiple runs are provided, select identical proteins among all runs.}
   \item{consensus_peptides}{if multiple runs are provided, select identical peptides among all runs.}
   \item{consensus_transitions}{if multiple runs are provided, select identical transitions among all runs.}

@@ -9,8 +9,8 @@
 \tabular{ll}{
 Package: \tab aLFQ\cr
 Type: \tab Package\cr
-Version: \tab 1.3\cr
-Date: \tab 2014-02-12\cr
+Version: \tab 1.3.1\cr
+Date: \tab 2014-02-20\cr
 Author: \tab George Rosenberger, Hannes Roest, Christina Ludwig. AAindex: Barry Grant.\cr
 Maintainer: \tab George Rosenberger <rosenberger@imsb.biol.ethz.ch>\cr
 Depends: \tab R (>= 2.15.0)\cr

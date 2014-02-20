@@ -87,11 +87,11 @@ import.default <- function(ms_filenames, ms_filetype, concentration_filename=NA,
 	else if (ms_filetype=="pepxml2csv") {
 		data.ms <- pepxml2csv_converter.import(ms_filenames, peptideprophet_cutoff=peptideprophet_cutoff, pepxml2csv_runsplit=pepxml2csv_runsplit)
 		if (averageruns==TRUE){
-			data.ms <- averageruns.import(data.ms,target="protein_intensity")
+			data.ms <- averageruns.import(data.ms,target="peptide_intensity")
 			data.ms$run_id <- "averaged"
 		}
 		if (sumruns==TRUE){
-			data.ms <- sumruns.import(data.ms,target="protein_intensity")
+			data.ms <- sumruns.import(data.ms,target="peptide_intensity")
 			data.ms$run_id <- "summed"
 		}
 		data <- subset(data.ms,is.finite(peptide_intensity))
@@ -291,7 +291,7 @@ abacus_transform.import <- function(data, peptideprophet_cutoff, abacus_column, 
 }
 
 pepxml2csv_converter.import <- function(ms_filenames, peptideprophet_cutoff, pepxml2csv_runsplit = "~", ...)  {
-	peptideprophet_cutoff<- probability <- peptide_intensity <- NULL
+	probability <- peptide_intensity <- NULL
 	data.files = lapply(ms_filenames, read_table.import)
 	data.import <- do.call("rbind", data.files)
 	data.import[which(is.na(data.import$modified_peptide)),]$modified_peptide<-data.import[which(is.na(data.import$modified_peptide)),]$peptide
@@ -310,7 +310,6 @@ pepxml2csv_converter.import <- function(ms_filenames, peptideprophet_cutoff, pep
 	data.ms<-subset(data.ms,probability >= peptideprophet_cutoff)
 	
 	setkeyv(data.ms,c("run_id","protein_id","peptide_id","peptide_sequence","precursor_charge"))
-
 	data.ms[, peptide_intensity:=1]
 
 	data.ms<-data.ms[, list("peptide_intensity"=sum(peptide_intensity)), by=key(data.ms)]
