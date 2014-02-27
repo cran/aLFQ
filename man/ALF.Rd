@@ -10,10 +10,11 @@ prediction_filename="ALF_prediction.csv", peptide_methods = c("top"),
 peptide_topx = c(1,2,3), peptide_strictness = "loose", 
 peptide_summary = "mean", transition_topx = c(1,2,3), 
 transition_strictness = "loose", transition_summary = "sum", fasta = NA, 
-apex_model = NA, combine_precursors = FALSE, consensus_proteins = TRUE, 
-consensus_peptides = TRUE, consensus_transitions = TRUE, scampi_method = "LSE", 
-scampi_iterations = 10, scampi_outliers = FALSE, scampi_outliers_iterations = 2, 
-scampi_outliers_threshold = 2, cval_method = "boot", cval_mcx = 1000, ...)
+apex_model = NA, combine_precursors = FALSE, combine_peptide_sequences = FALSE, 
+consensus_proteins = TRUE, consensus_peptides = TRUE, consensus_transitions = TRUE,
+scampi_method = "LSE", scampi_iterations = 10, scampi_outliers = FALSE, 
+scampi_outliers_iterations = 2, scampi_outliers_threshold = 2, 
+cval_method = "boot", cval_mcx = 1000, ...)
 }
 \arguments{
   \item{data}{a mandatory data frame containing the columns \code{"run_id"}, \code{"protein_id"}, \code{"peptide_id"}, \code{"peptide_sequence"}, \code{"precursor_charge"}, \code{"peptide_intensity"} and \code{"concentration"} are required. For quantification on the transition level, the columns \code{"protein_id"}, \code{"peptide_id"}, \code{"transition_id"}, \code{"peptide_sequence"}, \code{"precursor_charge"}, \code{"transition_intensity"} and \code{"concentration"} are required. The id columns can be defined in any format, while the \code{"_intensity"} and \code{"concentration"} columns need to be numeric and in non-log form. The data may contain calibration data (with numeric \code{"concentration"} and test data (with \code{"concentration"} = "?"))}
@@ -29,6 +30,7 @@ scampi_outliers_threshold = 2, cval_method = "boot", cval_mcx = 1000, ...)
   \item{fasta}{(\code{"iBAQ"}, \code{"APEX"}, \code{"NSAF"} and \code{"SCAMPI"} only:) the path and filename to an amino acid fasta file containing the proteins of interest.}
   \item{apex_model}{(\code{"APEX"} only:) The \code{"APEX"} model to use (see APEX).}
   \item{combine_precursors}{whether to sum all precursors of the same peptide.}
+  \item{combine_peptide_sequences}{whether to sum all variants (modifications) of the same peptide sequence.}
   \item{consensus_proteins}{if multiple runs are provided, select identical proteins among all runs.}
   \item{consensus_peptides}{if multiple runs are provided, select identical peptides among all runs.}
   \item{consensus_transitions}{if multiple runs are provided, select identical transitions among all runs.}

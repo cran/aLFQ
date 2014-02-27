@@ -96,7 +96,8 @@ test_that("protein_inference.ProteinInference: all peptide_method", {
 test_that("protein_inference.ProteinInference: iBAQ peptide_method", {
 	data(UPS2MS)
 
-	expect_that(protein_inference.ProteinInference(data.table(UPS2_LFQ), peptide_method = "iBAQ", peptide_summary = "sum", fasta = system.file("extdata","UPS2.fasta",package="aLFQ"), apex_model = NA, combine_precursors = FALSE, consensus_peptides = TRUE)$response,equals(c(25106081.31,125856278.00,87587312.93,95134656.33,17871715.00,6529159.17,28423.72,208145399.64,14028046.12,171435.00,347060.15,3673181.00,431140.67,156229765.07,1045140.00,12268096.30,60432526.25,4489209.67,67995597.05,37791831.53,16983291.54)))
+	expect_that(protein_inference.ProteinInference(data.table(UPS2_LFQ), peptide_method = "iBAQ", peptide_summary = "sum", fasta = system.file("extdata","UPS2.fasta",package="aLFQ"), apex_model = NA, combine_precursors = FALSE, consensus_peptides = TRUE)$response,equals(c(21962200.4166667, 118434366.571429, 69695738.6458333, 77898728, 
+13265416.6666667, 5239841.52777778, 29905.8518518519, 121466692, 8857917.53125, 222967.866666667, 137296.205882353, 1644366.41025641, 431313.111111111, 122004965.166667, 980991.333333333, 7794690, 46847015, 4293223.45833333, 67804931.8787879, 31584084.1666667, 15493374.7619048)))
 	expect_that(protein_inference.ProteinInference(peptide_data, peptide_method = "iBAQ", peptide_summary = "sum", fasta = system.file("extdata","example.fasta",package="aLFQ"), apex_model = NA, combine_precursors = FALSE, consensus_peptides = TRUE)$response,equals(c(40,100,47.5,90)))
 })
 

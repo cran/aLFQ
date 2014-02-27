@@ -1,5 +1,5 @@
 
-R version 3.0.2 Patched (2014-02-12 r64976) -- "Frisbee Sailing"
+R Under development (unstable) (2014-02-27 r65084) -- "Unsuffered Consequences"
 Copyright (C) 2014 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin13.0.0 (64-bit)
 
@@ -146,7 +146,7 @@ Calibration Testset size: 4
 Calibration Regression mean-fold error: 1.86633
 Calibration Regression R-squared: 0.9395671
 Calibration cross-validation mean-fold error: 3.751026
-Calibration cross-validation R-squared: -Inf
+Calibration cross-validation R-squared: 0.7392299
 Calibration CV: 17.53133
 Normalized Concentration CV: -86.98352
 > plot(data_AQ)
@@ -1223,7 +1223,7 @@ Type rfNews() to see new features/changes/bug fixes.
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  5.746 0.24 5.989 0 0 
+Time elapsed:  5.673 0.331 6.006 0 0 
 > grDevices::dev.off()
 null device 
           1 

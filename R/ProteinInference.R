@@ -1,7 +1,7 @@
 # Protein inference for aLFQ import data frame
 ProteinInference <- function(data, ...)  UseMethod("ProteinInference")
 
-ProteinInference.default <- function(data, peptide_method = "top", peptide_topx = 2, peptide_strictness = "strict", peptide_summary = "mean", transition_topx = 3, transition_strictness = "strict", transition_summary = "sum", fasta = NA, apex_model = NA, combine_precursors = FALSE, consensus_proteins = TRUE, consensus_peptides = TRUE, consensus_transitions = TRUE, scampi_method = "LSE", scampi_iterations = 10, scampi_outliers = FALSE, scampi_outliers_iterations = 2, scampi_outliers_threshold = 2, ...) {
+ProteinInference.default <- function(data, peptide_method = "top", peptide_topx = 2, peptide_strictness = "strict", peptide_summary = "mean", transition_topx = 3, transition_strictness = "strict", transition_summary = "sum", fasta = NA, apex_model = NA, combine_precursors = FALSE, combine_peptide_sequences = FALSE, consensus_proteins = TRUE, consensus_peptides = TRUE, consensus_transitions = TRUE, scampi_method = "LSE", scampi_iterations = 10, scampi_outliers = FALSE, scampi_outliers_iterations = 2, scampi_outliers_threshold = 2, ...) {
 	peptide_sequence <- response <- concentration <- peptide_intensity <- NULL
 
 	data <- data.table(data)
@@ -38,7 +38,7 @@ ProteinInference.default <- function(data, peptide_method = "top", peptide_topx 
 
 	# if the data is on the peptide level
 	if ("peptide_intensity" %in% names(peptide)) {
-		protein <- protein_inference.ProteinInference(peptide, peptide_method = peptide_method, peptide_topx = peptide_topx, peptide_strictness = peptide_strictness, peptide_summary = peptide_summary, fasta = fasta, apex_model = apex_model, combine_precursors = combine_precursors, consensus_proteins = consensus_proteins, consensus_peptides = consensus_peptides, scampi_method = scampi_method)
+		protein <- protein_inference.ProteinInference(peptide, peptide_method = peptide_method, peptide_topx = peptide_topx, peptide_strictness = peptide_strictness, peptide_summary = peptide_summary, fasta = fasta, apex_model = apex_model, combine_precursors = combine_precursors, combine_peptide_sequences = combine_peptide_sequences, consensus_proteins = consensus_proteins, consensus_peptides = consensus_peptides, scampi_method = scampi_method)
 	}
 	else {
 		protein <- peptide
@@ -57,8 +57,8 @@ ProteinInference.default <- function(data, peptide_method = "top", peptide_topx 
 	return(data.frame(result))
 }
 
-protein_inference.ProteinInference <- function(data.dt, peptide_method = "top", peptide_topx = 1, peptide_strictness = "loose", peptide_summary = "mean", fasta = NA, apex_model = NA, combine_precursors = FALSE, consensus_proteins = TRUE, consensus_peptides = TRUE, scampi_method = "LSE", scampi_iterations = 10, scampi_outliers = FALSE, scampi_outliers_iterations = 2, scampi_outliers_threshold = 2) {
-	run_id <- protein_id <- peptide_id <- precursor_charge <- omni <- omni_reference <- peptide_intensity <- mean_peptide_intensity <- min_mean_peptide_intensity <- protein_sequence <- protein_sequence_length <- concentration <- response <- NULL
+protein_inference.ProteinInference <- function(data.dt, peptide_method = "top", peptide_topx = 1, peptide_strictness = "loose", peptide_summary = "mean", fasta = NA, apex_model = NA, combine_precursors = FALSE, combine_peptide_sequences = FALSE, consensus_proteins = TRUE, consensus_peptides = TRUE, scampi_method = "LSE", scampi_iterations = 10, scampi_outliers = FALSE, scampi_outliers_iterations = 2, scampi_outliers_threshold = 2) {
+	run_id <- protein_id <- peptide_id <- peptide_sequence <- precursor_charge <- omni <- omni_reference <- peptide_intensity <- mean_peptide_intensity <- min_mean_peptide_intensity <- protein_sequence <- protein_sequence_length <- concentration <- response <- NULL
 
 	if (!is.na(fasta)) {
 		peptide_sequences.fasta <- trypsin(fasta)
@@ -86,6 +86,12 @@ protein_inference.ProteinInference <- function(data.dt, peptide_method = "top", 
 	if (combine_precursors) {
 		setkeyv(data.dt,c("run_id","protein_id","peptide_id","peptide_sequence","concentration"))
 		data.dt<-data.dt[, list("precursor_charge"=0, "peptide_intensity"=sum(peptide_intensity)), by=key(data.dt)]
+	}
+
+	# should peptide sequences be summed?
+	if (combine_peptide_sequences) {
+		setkeyv(data.dt,c("run_id","protein_id","peptide_sequence","concentration"))
+		data.dt<-data.dt[, list("peptide_id"=peptide_sequence[1], "precursor_charge"=0, "peptide_intensity"=sum(peptide_intensity)), by=key(data.dt)]
 	}
 			
 	if (peptide_method == "top") {
@@ -132,12 +138,22 @@ protein_inference.ProteinInference <- function(data.dt, peptide_method = "top", 
 	}
 	else if (peptide_method == "iBAQ") {
     	if (is.na(fasta)) stop("This peptide_method requries a FASTA file.")
+		peptides<-ldply(peptide_sequences.fasta, function(x) ldply(x))
+		names(peptides)<-c("protein_id","peptide_sequence")
+
+		data.dt<-subset(data.dt,peptide_sequence %in% peptides$peptide_sequence)
+
 		setkeyv(data.dt,c("run_id","protein_id","concentration"))
 
 		data.dt<-data.dt[, list("response"=sum(peptide_intensity)/length(unlist((lapply(as.list(peptide_sequences.fasta[[protein_id[1]]]),function(X){if(nchar(X)>=6 && nchar(X)<=30){return(X)}else{return(NA)}})))[!is.na(unlist((lapply(as.list(peptide_sequences.fasta[[protein_id[1]]]),function(X){if(nchar(X)>=6 && nchar(X)<=30){return(X)}else{return(NA)}}))))])), by=key(data.dt)]
 	}
 	else if (peptide_method == "APEX") {
     	if (is.na(fasta)) stop("This peptide_method requries a FASTA file.")
+		peptides<-ldply(peptide_sequences.fasta, function(x) ldply(x))
+		names(peptides)<-c("protein_id","peptide_sequence")
+
+		data.dt<-subset(data.dt,peptide_sequence %in% peptides$peptide_sequence)
+
 		peptide_sequences.af <- apexFeatures(data.frame("peptide_sequence" = unique(as.vector(unlist(peptide_sequences.fasta[data.dt$protein_id]))), "apex"=NA, stringsAsFactors=FALSE))
 
         peptide_sequences.apex <- predict(apex_model,peptide_sequences.af)$prediction[,c("peptide_sequence","apex")]
@@ -147,6 +163,11 @@ protein_inference.ProteinInference <- function(data.dt, peptide_method = "top", 
 	}
 	else if (peptide_method == "NSAF") {
     	if (is.na(fasta)) stop("This peptide_method requries a FASTA file.")
+		peptides<-ldply(peptide_sequences.fasta, function(x) ldply(x))
+		names(peptides)<-c("protein_id","peptide_sequence")
+
+		data.dt<-subset(data.dt,peptide_sequence %in% peptides$peptide_sequence)
+
 		setkeyv(data.dt,c("run_id","protein_id","concentration"))
 
 		proteins <- ldply(read.fasta(file = fasta, seqtype = "AA", as.string = TRUE, seqonly = FALSE, strip.desc = TRUE), function(x) ldply(x))
@@ -169,6 +190,11 @@ protein_inference.ProteinInference <- function(data.dt, peptide_method = "top", 
 	}
 	else if (peptide_method == "SCAMPI") {
     	if (is.na(fasta)) stop("This peptide_method requries a FASTA file.")
+		peptides<-ldply(peptide_sequences.fasta, function(x) ldply(x))
+		names(peptides)<-c("protein_id","peptide_sequence")
+
+		data.dt<-subset(data.dt,peptide_sequence %in% peptides$peptide_sequence)
+
      	if (!combine_precursors) stop("This peptide_method requries to combine precursors. Set combine_precursors=TRUE.")
     	if (!(scampi_method %in% c("LSE","MLE"))) stop("Select a valid SCAMPI method: LSE or MLE.")
 
