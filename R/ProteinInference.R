@@ -32,7 +32,7 @@ ProteinInference.default <- function(data, peptide_method = "top", peptide_topx 
 
 		conc_proteins<-conc_proteins[, list("concentration"=mean(concentration)), by=key(conc_proteins)]
 
-		peptide<-merge(peptide[concentration=="?",concentration:=NULL],conc_proteins, by=c("run_id","protein_id"), all.x=TRUE)
+		peptide<-merge(peptide[concentration=="?"][,concentration:=NULL],conc_proteins, by=c("run_id","protein_id"), all.x=TRUE)
 		peptide$concentration[ is.na(peptide$concentration) ] <- "?"
 	}
 
@@ -269,7 +269,6 @@ PeptideInference.default <- function(data, transition_topx = 3, transition_stric
 }
 
 scampi.ProteinInference <- function(data.df, peptide_sequences.fasta, scampi_method, scampi_iterations, scampi_outliers, scampi_outliers_iterations, scampi_outliers_threshold) {
-	require(protiq)
 	peptides<-ldply(peptide_sequences.fasta, function(x) ldply(x))
 	names(peptides)<-c("protein_id","peptide_sequence")
 

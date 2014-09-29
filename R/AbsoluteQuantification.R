@@ -232,7 +232,6 @@ pivot <- function(x, ...)  UseMethod("pivot")
 
 pivot.default <- function(x, ...) {
     if (!inherits(x, "data.frame")) stop("Is not a data.frame")
-	require(reshape2)
 
 	if ("sec_id" %in% names(x)) {
 		data<-acast(x, protein_id ~ sec_id, value.var="response", fill=0)
@@ -247,7 +246,6 @@ pivot.default <- function(x, ...) {
 pivot.AbsoluteQuantification <- function(x, ...) {
     if (!inherits(x, "AbsoluteQuantification")) stop("Is not a AbsoluteQuantification object")
     if ("?" %in% x$prediction$concentration) stop("Apply predict before pivot to AbsoluteQuantification object")
-	require(reshape2)
 
     if (x$is_calibrated) {
     	x$prediction$concentration<-exp(as.numeric(x$prediction$concentration))

@@ -1,7 +1,6 @@
 APEX <- function(data, ...) UseMethod("APEX")
 
 APEX.default <- function(data, ...) {
-	require(randomForest)
 	class(data) <- "data.frame"
 
 	object = list()
@@ -16,7 +15,6 @@ APEX.default <- function(data, ...) {
 }
 
 predict.APEX <- function(object, newdata=NULL, ...) {
-	require(randomForest)
     if (!inherits(object, "APEX")) stop("Is not a APEX object")
 	class(newdata) <- "data.frame"
 	object$prediction <- newdata
@@ -25,10 +23,7 @@ predict.APEX <- function(object, newdata=NULL, ...) {
 	return(object)
 }
 
-cval.APEX <- function(object, folds=10, ...) {
-	require(randomForest)
-	require(ROCR)
-	
+cval.APEX <- function(object, folds=10, ...) {	
     if (!inherits(object, "APEX")) stop("Is not a APEX object")
 	object$cval <- list()
 	

@@ -1,7 +1,7 @@
 
-R Under development (unstable) (2014-02-27 r65084) -- "Unsuffered Consequences"
+R Under development (unstable) (2014-09-27 r66695) -- "Unsuffered Consequences"
 Copyright (C) 2014 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin13.0.0 (64-bit)
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -67,9 +67,6 @@ Type 'q()' to quit R.
 > APEX_ORBI<-head(APEX_ORBI,50) # Remove this line for real applications
 > APEX_ORBI.af <- apexFeatures(APEX_ORBI)
 > APEX_ORBI.apex <- APEX(data=APEX_ORBI.af)
-Loading required package: randomForest
-randomForest 4.6-7
-Type rfNews() to see new features/changes/bug fixes.
 > print(APEX_ORBI.apex)
 APEX
 Features: 69
@@ -77,25 +74,11 @@ Trainingset size: 50
 Testset size: 
 > 
 > APEX_ORBI_cval.apex <- cval(APEX_ORBI.apex, folds=2)
-Loading required package: ROCR
-Loading required package: gplots
-KernSmooth 2.23 loaded
-Copyright M. P. Wand 1997-2009
-
-Attaching package: ‘gplots’
-
-The following object is masked from ‘package:stats’:
-
-    lowess
-
 > plot(APEX_ORBI_cval.apex)
 > 
 > 
 > 
 > cleanEx()
-
-detaching ‘package:ROCR’, ‘package:gplots’, ‘package:randomForest’
-
 > nameEx("APEXMS")
 > ### * APEXMS
 > 
@@ -152,7 +135,6 @@ Normalized Concentration CV: -86.98352
 > plot(data_AQ)
 > hist(data_AQ)
 > pivot(data_AQ)
-Loading required package: reshape2
                              UPS2_SRM
 O76070ups|SYUG_HUMAN_UPS    0.6497359
 P00167ups|CYB5_HUMAN_UPS  104.9926657
@@ -162,9 +144,6 @@ P00915ups|CAH1_HUMAN_UPS  249.4324721
 > 
 > 
 > cleanEx()
-
-detaching ‘package:reshape2’
-
 > nameEx("LUDWIGMS")
 > ### * LUDWIGMS
 > 
@@ -1209,9 +1188,6 @@ Dataset size: 20
 > APEX_ORBI<-head(APEX_ORBI,20) # Remove this line for real applications
 > APEX_ORBI.af <- apexFeatures(APEX_ORBI)
 > APEX_ORBI.apex <- APEX(data=APEX_ORBI.af)
-Loading required package: randomForest
-randomForest 4.6-7
-Type rfNews() to see new features/changes/bug fixes.
 > 
 > peptides <- proteotypic(fasta=system.file("extdata","example.fasta",package="aLFQ"),
 + apex_model=APEX_ORBI.apex, min_aa=4 , max_aa=20)
@@ -1223,7 +1199,7 @@ Type rfNews() to see new features/changes/bug fixes.
 > ###
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  5.673 0.331 6.006 0 0 
+Time elapsed:  5.695 0.307 6.005 0 0 
 > grDevices::dev.off()
 null device 
           1 

@@ -87,6 +87,5 @@ tune.ALF <- function(data, peptide_methods = "top", peptide_topx = 2, peptide_st
 }
 
 performanceplot.ALF <- function(x, ...) {
-	require(lattice)
 	print(levelplot(t(x),xlab="Peptides",ylab="Transitions",main=paste("Optimal model: ",rownames(x)[which(x == min(x), arr.ind = TRUE)[1]]," Transitions, ",colnames(x)[which(x == min(x), arr.ind = TRUE)[2]]," Peptides",sep="")))
 }
